@@ -1,2 +1,3 @@
 # shared
-Shared library of code that can be used across multiple applications
+
+> A library of code that can be used across multiple applications
