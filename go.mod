@@ -1,4 +1,4 @@
-module github.com/pkg/share
+module github.com/jobaldw/shared
 
 go 1.14
 
