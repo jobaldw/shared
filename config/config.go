@@ -23,7 +23,7 @@ type Config struct {
 
 // App struct
 type App struct {
-	App        string       `json:"application,omitempty"`
+	Name       string       `json:"application,omitempty"`
 	Port       int          `json:"port,omitempty"`
 	LogLevel   logrus.Level `json:"log_level,omitempty"`
 	StackTrace bool         `json:"stack_trace,omitempty"`
@@ -59,7 +59,7 @@ func Marshal() (conf Config, err error) {
 	}
 
 	log.Configure(log.Logger{
-		App:       conf.App,
+		App:       conf.App.Name,
 		Level:     conf.App.LogLevel,
 		ShowStack: conf.App.StackTrace,
 	})
