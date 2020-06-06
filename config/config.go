@@ -67,7 +67,7 @@ func Marshal() (conf Config, err error) {
 	return
 }
 
-func hasSource(string file) bool {
+func hasSource(file string) bool {
 	if _, err := os.Stat(file); os.IsNotExist(err) {
 		return false
 	}
