@@ -42,7 +42,7 @@ type Database struct {
 	Collections map[string]string `json:"collections,omitempty"`
 }
 
-//Marshal configurables and configure logging
+// Marshal configurables and configure logging
 func Marshal() (conf Config, err error) {
 	if hasSource(appSource) {
 		err = gonfig.GetConf(appSource, &conf.App)
@@ -59,9 +59,9 @@ func Marshal() (conf Config, err error) {
 	}
 
 	log.Configure(log.Logger{
-		App:       conf.AppName,
-		Level:     conf.LogLevel,
-		ShowStack: conf.StackTrace,
+		App:       conf.App,
+		Level:     conf.App.LogLevel,
+		ShowStack: conf.App.StackTrace,
 	})
 
 	return
