@@ -47,6 +47,7 @@ func Marshal() (conf Config, err error) {
 	if hasSource(appSource) {
 		err = gonfig.GetConf(appSource, &conf.App)
 		if err != nil {
+			log.Error("app")
 			return conf, errors.WithMessage(err, "could not read config")
 		}
 	}
@@ -54,6 +55,7 @@ func Marshal() (conf Config, err error) {
 	if hasSource(dataSource) {
 		err = gonfig.GetConf(dataSource, &conf.Datasource)
 		if err != nil {
+			log.Error("data")
 			return conf, errors.WithMessage(err, "could not read config")
 		}
 	}
