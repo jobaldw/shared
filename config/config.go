@@ -23,10 +23,10 @@ type Config struct {
 
 // App struct
 type App struct {
-	Name       string       `json:"application,omitempty"`
-	Port       int          `json:"port,omitempty"`
-	LogLevel   logrus.Level `json:"log_level,omitempty"`
-	StackTrace bool         `json:"stack_trace,omitempty"`
+	Name       string       `json:"application,omitempty" bson:"application,omitempty"`
+	Port       int          `json:"port,omitempty" bson:"port,omitempty"`
+	LogLevel   logrus.Level `json:"log_level,omitempty" bson:"log_level,omitempty" `
+	StackTrace bool         `json:"stack_trace,omitempty" bson:"stack_trace,omitempty"`
 }
 
 // Datasource struct
@@ -47,16 +47,14 @@ func Marshal() (conf Config, err error) {
 	if hasSource(appSource) {
 		err = gonfig.GetConf(appSource, &conf.App)
 		if err != nil {
-			log.Error("app")
-			return conf, errors.WithMessage(err, "could not read config")
+			return conf, errors.WithMessage(err, "could not read appliation configurations")
 		}
 	}
 
 	if hasSource(dataSource) {
 		err = gonfig.GetConf(dataSource, &conf.Datasource)
 		if err != nil {
-			log.Error("data")
-			return conf, errors.WithMessage(err, "could not read config")
+			return conf, errors.WithMessage(err, "could not read datasource configurations")
 		}
 	}
 
@@ -66,7 +64,7 @@ func Marshal() (conf Config, err error) {
 		ShowStack: conf.App.StackTrace,
 	})
 
-	log.Entry.WithField("method", "Marshal").Info("configured!")
+	log.Entry.WithField("method", "Marshal").Debugf("%s configured.", conf.App.Name)
 	return
 }
 
