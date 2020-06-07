@@ -5,10 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/jobaldw/shared/log"
-
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 )
 
 // Resp from client
@@ -24,14 +21,7 @@ type Resp struct {
 // Health check
 func Health(name string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		resp := Resp{Status: "Up"}
-		resp.MSG = fmt.Sprintf("%s is healthy", name)
-
-		log.Entry.WithFields(logrus.Fields{
-			"method": "Health",
-			"status": resp.Status,
-		},
-		).Info(resp.MSG)
+		resp := Resp{Status: "Up", MSG: fmt.Sprintf("%s is healthy", name)}
 		Response(w, http.StatusOK, resp)
 	}
 }

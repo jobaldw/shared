@@ -64,7 +64,6 @@ func Marshal() (conf Config, err error) {
 		ShowStack: conf.App.StackTrace,
 	})
 
-	log.Entry.WithField("method", "Marshal").Debugf("%s configured.", conf.App.Name)
 	return
 }
 
