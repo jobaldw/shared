@@ -12,6 +12,9 @@ import (
 // Entry struct
 var Entry *logrus.Entry
 
+// Fields map
+var Fields *logrus.Fields
+
 // Logger struct
 type Logger struct {
 	Name  string
