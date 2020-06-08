@@ -13,7 +13,7 @@ import (
 var Entry *logrus.Entry
 
 // Fields map
-var Fields logrus.Fields
+type Fields logrus.Fields
 
 // Logger struct
 type Logger struct {
