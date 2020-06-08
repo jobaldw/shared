@@ -43,7 +43,7 @@ func Configure(conf Logger) {
 
 // Add fields to log
 func Add(fields Fields) {
-	var lFields logrus.Fields
+	lFields := make(logrus.Fields)
 
 	for k, v := range fields {
 		lFields[k] = v
