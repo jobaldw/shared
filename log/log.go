@@ -62,13 +62,13 @@ func Details() {
 
 // Line number
 func line() int {
-	_, _, line, _ := runtime.Caller(1)
+	_, _, line, _ := runtime.Caller(2)
 	return line
 }
 
 // File name
 func file() string {
-	_, filePath, _, _ := runtime.Caller(1)
+	_, filePath, _, _ := runtime.Caller(2)
 	file := path.Base(filePath)
 
 	return file
