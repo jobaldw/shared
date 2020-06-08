@@ -3,8 +3,6 @@ package config
 import (
 	"os"
 
-	"github.com/jobaldw/shared/log"
-
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/tkanos/gonfig"
@@ -57,12 +55,6 @@ func Marshal() (conf Config, err error) {
 			return conf, errors.WithMessage(err, "could not read datasource configurations")
 		}
 	}
-
-	log.Configure(log.Logger{
-		App:       conf.App.Name,
-		Level:     conf.App.LogLevel,
-		ShowStack: conf.App.StackTrace,
-	})
 
 	return
 }
