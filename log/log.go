@@ -49,7 +49,7 @@ func Add(fields Fields) {
 		lFields[k] = v
 	}
 
-	Entry.WithFields(lFields)
+	Entry = logrus.WithFields(lFields)
 }
 
 // Details of log
