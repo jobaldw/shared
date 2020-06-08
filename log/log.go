@@ -41,14 +41,33 @@ func Configure(conf Logger) {
 	})
 }
 
+// Add fields to log
+func Add(fields Fields) {
+	var lFields logrus.Fields
+
+	for k, v := range fields {
+		lFields[k] = v
+	}
+
+	Entry.WithFields(lFields)
+}
+
+// Details of log
+func Details() {
+	Entry = logrus.WithFields(logrus.Fields{
+		"line": line(),
+		"file": file(),
+	})
+}
+
 // Line number
-func Line() int {
+func line() int {
 	_, _, line, _ := runtime.Caller(1)
 	return line
 }
 
 // File name
-func File() string {
+func file() string {
 	_, filePath, _, _ := runtime.Caller(1)
 	file := path.Base(filePath)
 
