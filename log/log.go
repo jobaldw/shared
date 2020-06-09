@@ -14,9 +14,6 @@ import (
 // Entry struct
 var Entry *logrus.Entry
 
-// Fields map
-type Fields map[string]interface{}
-
 // Logger struct
 type Logger struct {
 	Name  string
@@ -49,30 +46,18 @@ func Configure(conf Logger) {
 	})
 }
 
-// Log message
-func Log() *logrus.Entry {
+// Details of log
+func Details() *logrus.Entry {
 	pc, file, line, ok := runtime.Caller(1)
 	if !ok {
-		panic("Could not get context info for logger!")
+		return Entry
 	}
 
-	filename := file[strings.LastIndex(file, "/")+1:] + ":" + strconv.Itoa(line)
-	funcname := runtime.FuncForPC(pc).Name()
-	fn := funcname[strings.LastIndex(funcname, ".")+1:]
+	fileName := path.Base(file) + ":" + strconv.Itoa(line)
 
-	return logrus.WithField("file", filename).WithField("function", fn)
-}
+	function := runtime.FuncForPC(pc).Name()
+	funcName := function[strings.LastIndex(function, ".")+1:] + "()"
 
-// Line number
-func Line() int {
-	_, _, line, _ := runtime.Caller(1)
-	return line
-}
-
-// File name
-func File() string {
-	_, filePath, _, _ := runtime.Caller(1)
-	file := path.Base(filePath)
-
-	return file
+	Entry = logrus.WithField("file", fileName).WithField("function", funcName)
+	return Entry
 }
