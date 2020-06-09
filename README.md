@@ -69,6 +69,7 @@ Utilizes [sirupsen/logrus](https://github.com/sirupsen/logrus "sirupsen/logrus")
 	"application":"api",
 	"file":"file.go:10",
 	"function":"func()",
+    "id": 123-456-7890,
 	"level":"info",
 	"msg":"a message",
 	"time":"2020-06-09T12:30:00-05:00"
@@ -94,8 +95,8 @@ func main() {
 ### Usage
 ``` go
 func foo() {
-    log.Info("message") // prints default fields
-    log.Details().Info("message") // prints default fields, file, and function
-    log.Add(log.Fields{"id": 123-456-7890}).Info("message") // prints Details() and any additional fields specified
+    log.Info("a message") // prints default fields
+    log.Details().Info("a message") // prints default fields, file, and function
+    log.Add(log.Fields{"id": 123-456-7890}).Info("a message") // prints Details() and any additional fields specified
 }
 ```
