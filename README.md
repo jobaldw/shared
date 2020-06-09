@@ -12,19 +12,19 @@ Reads in **json** key value pairs that are unmarshaled into one configuration st
 
 ``` golang
 type Config struct {
-	App        App
+	App App
 	Datasource Datasource
 }
 ```
 
-This package relies on a directory that should be at the root of the application called `config`. The **Unmarshal()** function looks for two json files named *application.json* and *datasource.json*.
+This package relies on a directory that should be at the root of the application called `config`. The **Unmarshal()** function looks for two json files named `application.json` and `datasource.json`.
 
-- config
--- application.json  // *gets read into the App struct*
--- datasource.json // *gets read into the Datasource struct*
+- config<br>
+-- application.json  // *gets read into the App struct*<br>
+-- datasource.json // *gets read into the Datasource struct*<br>
 
-*App - configurables for common application related objects.*
-*Datasource - configurations for one or more mongo database objects.*
+*App - configurables for common application related objects.*<br>
+*Datasource - configurations for one or more mongo database objects.*<br>
 
 ``` golang
 type App struct {
