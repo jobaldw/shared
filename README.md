@@ -1,6 +1,6 @@
 # shared
 
-> A library of code that can be used across Go applications.
+> A library of code that can be used in Go applications.
 
 ![JB Desgins](https://github.com/jobaldw/shared/blob/master/jb-icon.jpg)
 
@@ -19,9 +19,9 @@ type Config struct {
 
 This package relies on a directory that should be at the root of the application called `config`. The **Unmarshal()** function looks for two json files named `application.json` and `datasource.json`.
 
-- config<br>
--- application.json  // *gets read into the App struct*<br>
--- datasource.json // *gets read into the Datasource struct*<br>
+- config
+- application.json  // *gets read into the App struct*
+- datasource.json // *gets read into the Datasource struct*
 
 *App - configurables for common application related objects.*<br>
 *Datasource - configurations for one or more mongo database objects.*<br>
