@@ -1,13 +1,12 @@
 package config
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"reflect"
-
-	"gopkg.in/yaml.v2"
 )
 
 const (
@@ -91,7 +90,7 @@ func getValues(filename string, configuration interface{}) (err error) {
 		return
 	}
 
-	err = yaml.Unmarshal(data, &configuration)
+	err = json.Unmarshal(data, &configuration)
 	if err != nil {
 		return
 	}
