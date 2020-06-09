@@ -20,35 +20,32 @@ type Config struct {
 This package relies on a directory that should be at the root of the application called `config`. The **Unmarshal()** function looks for two json files named `application.json` and `datasource.json`.
 
 - config
-- application.json  // *gets read into the App struct*
-- datasource.json // *gets read into the Datasource struct*
+	- application.json  // *gets read into the App struct*
+	- datasource.json // *gets read into the Datasource struct*
 
-*App - configurables for common application related objects.*<br>
-*Datasource - configurations for one or more mongo database objects.*<br>
+*App - configurables for common application related objects.*
 
 ``` golang
 type App struct {
-	Name        string
-	Port          int
-	LogLevel   string
+	Name string
+	Port int
+	LogLevel string
 }
 ```
 
-``` golang
+*Datasource - configurations for one or more mongo database objects.*
 
+``` golang
 type Datasource struct {
 	Database  Database
 	Databases map[string]Database
 }
 
 type Database struct {
-	Database   string
-	URI            string
+	Database string
+	URI string
 	Collections map[string]string
 }
 ```
-
-
-
 
 ## log
