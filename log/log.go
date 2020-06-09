@@ -16,27 +16,20 @@ var Entry *logrus.Entry
 // Fields type
 type Fields map[string]string
 
-// Logger struct
-type Logger struct {
-	App   string
-	Level string
-}
-
 // Configure logger
-func Configure(conf Logger) {
+func Configure(app, level string) {
+	lvl, err := logrus.ParseLevel(level)
+	if err != nil {
+		lvl = logrus.ErrorLevel
+	}
+
+	logrus.SetLevel(lvl)
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 	logrus.SetOutput(os.Stdout)
 
-	level, err := logrus.ParseLevel(conf.Level)
-	if err != nil {
-		level = logrus.ErrorLevel
-	}
-
-	logrus.SetLevel(level)
-
 	// Base log field that will be in every log message
 	Entry = logrus.WithFields(logrus.Fields{
-		"application": conf.App,
+		"application": app,
 	})
 }
 
