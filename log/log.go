@@ -4,6 +4,8 @@ import (
 	"os"
 	"path"
 	"runtime"
+	"strconv"
+	"strings"
 
 	logrusStack "github.com/Gurpartap/logrus-stack"
 	"github.com/sirupsen/logrus"
@@ -45,6 +47,20 @@ func Configure(conf Logger) {
 	Entry = logrus.WithFields(logrus.Fields{
 		"application": conf.Name,
 	})
+}
+
+// Log message
+func Log() *logrus.Entry {
+	pc, file, line, ok := runtime.Caller(1)
+	if !ok {
+		panic("Could not get context info for logger!")
+	}
+
+	filename := file[strings.LastIndex(file, "/")+1:] + ":" + strconv.Itoa(line)
+	funcname := runtime.FuncForPC(pc).Name()
+	fn := funcname[strings.LastIndex(funcname, ".")+1:]
+
+	return logrus.WithField("file", filename).WithField("function", fn)
 }
 
 // Line number
