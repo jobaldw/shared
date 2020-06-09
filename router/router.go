@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/pkg/errors"
+	"github.com/gorilla/mux"
 )
 
-// Resp from client
+// Resp struct
 type Resp struct {
 	ID      interface{} `json:"id,omitempty"`
 	Payload interface{} `json:"payload,omitempty"`
@@ -18,12 +18,38 @@ type Resp struct {
 	ERR    string `json:"error,omitempty"`
 }
 
-// Health check
-func Health(name string) http.HandlerFunc {
+// New mux router
+func New(app string) http.Handler {
+	r := mux.NewRouter()
+
+	r.HandleFunc("/health", health(app)).Methods(http.MethodGet)
+
+	return r
+}
+
+func health(name string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		resp := Resp{Status: "Up", MSG: fmt.Sprintf("%s is healthy", name)}
 		Response(w, http.StatusOK, resp)
 	}
+}
+
+// Response to client
+func Response(w http.ResponseWriter, code int, payload interface{}) error {
+	response, err := json.Marshal(payload)
+	if err != nil {
+		return fmt.Errorf("%s, %s", err, "could not marshal payload")
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+
+	_, err = w.Write(response)
+	if err != nil {
+		return fmt.Errorf("%s, %s", err, "could not write response")
+	}
+
+	return err
 }
 
 // Ready state
@@ -51,21 +77,3 @@ func Health(name string) http.HandlerFunc {
 // 		Response(w, http.StatusOK, resp)
 // 	}
 // }
-
-// Response writes to client
-func Response(w http.ResponseWriter, code int, payload interface{}) error {
-	response, err := json.Marshal(payload)
-	if err != nil {
-		return errors.WithMessage(err, "could not marshal payload")
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-
-	_, err = w.Write(response)
-	if err != nil {
-		return errors.WithMessage(err, "could not write response")
-	}
-
-	return err
-}
