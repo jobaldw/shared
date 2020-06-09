@@ -14,7 +14,7 @@ import (
 var Entry *logrus.Entry
 
 // Fields type
-type Fields map[string]string
+type Fields map[string]interface{}
 
 // Configure logger
 func Configure(app, level string) {
