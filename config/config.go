@@ -41,8 +41,8 @@ type Database struct {
 	Collections map[string]string `json:"collections,omitempty"`
 }
 
-// Marshal configurables and configure logging
-func Marshal() (conf Config, err error) {
+// Unmarshal configurables
+func Unmarshal() (conf Config, err error) {
 	if hasSource(appSource) {
 		err = read(appSource, &conf.App)
 		if err != nil {
