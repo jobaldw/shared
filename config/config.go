@@ -1,10 +1,13 @@
 package config
 
 import (
+	"errors"
+	"fmt"
+	"io/ioutil"
 	"os"
+	"reflect"
 
-	"github.com/pkg/errors"
-	"github.com/tkanos/gonfig"
+	"gopkg.in/yaml.v2"
 )
 
 const (
@@ -42,16 +45,16 @@ type Database struct {
 // Marshal configurables and configure logging
 func Marshal() (conf Config, err error) {
 	if hasSource(appSource) {
-		err = gonfig.GetConf(appSource, &conf.App)
+		err = read(appSource, &conf.App)
 		if err != nil {
-			return conf, errors.WithMessage(err, "could not read appliation configurations")
+			return conf, fmt.Errorf("%s, %s '%s'", err, "could not read", appSource)
 		}
 	}
 
 	if hasSource(dataSource) {
-		err = gonfig.GetConf(dataSource, &conf.Datasource)
+		err = read(dataSource, &conf.Datasource)
 		if err != nil {
-			return conf, errors.WithMessage(err, "could not read datasource configurations")
+			return conf, fmt.Errorf("%s, %s '%s'", err, "could not read", dataSource)
 		}
 	}
 
@@ -64,4 +67,34 @@ func hasSource(file string) bool {
 	}
 
 	return true
+}
+
+func read(filename string, configuration interface{}) (err error) {
+	configValue := reflect.ValueOf(configuration)
+	if typ := configValue.Type(); typ.Kind() != reflect.Ptr || typ.Elem().Kind() != reflect.Struct {
+		return errors.New("configuration should be a pointer to a struct type")
+	}
+
+	return getValues(filename, configuration)
+}
+
+func getValues(filename string, configuration interface{}) (err error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return
+	}
+
+	defer file.Close()
+
+	data, err := ioutil.ReadAll(file)
+	if err != nil {
+		return
+	}
+
+	err = yaml.Unmarshal(data, &configuration)
+	if err != nil {
+		return
+	}
+
+	return
 }
