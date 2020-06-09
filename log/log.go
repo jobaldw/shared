@@ -14,6 +14,9 @@ import (
 // Entry struct
 var Entry *logrus.Entry
 
+// Fields type
+type Fields map[string]string
+
 // Logger struct
 type Logger struct {
 	Name  string
@@ -48,7 +51,22 @@ func Configure(conf Logger) {
 
 // Details of log
 func Details() *logrus.Entry {
-	pc, file, line, ok := runtime.Caller(1)
+	return details()
+}
+
+// Add log fields
+func Add(fields Fields) *logrus.Entry {
+	logrusFields := make(logrus.Fields)
+
+	for k, v := range fields {
+		logrusFields[k] = v
+	}
+
+	return details().WithFields(logrus.Fields(logrusFields))
+}
+
+func details() *logrus.Entry {
+	pc, file, line, ok := runtime.Caller(2)
 	if !ok {
 		return Entry
 	}
@@ -57,6 +75,5 @@ func Details() *logrus.Entry {
 
 	function := runtime.FuncForPC(pc).Name()
 	funcName := function[strings.LastIndex(function, ".")+1:] + "()"
-
 	return Entry.WithField("file", fileName).WithField("function", funcName)
 }
