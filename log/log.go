@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	logrusStack "github.com/Gurpartap/logrus-stack"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,9 +18,8 @@ type Fields map[string]string
 
 // Logger struct
 type Logger struct {
-	Name  string
+	App   string
 	Level string
-	Stack bool
 }
 
 // Configure logger
@@ -29,23 +27,16 @@ func Configure(conf Logger) {
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 	logrus.SetOutput(os.Stdout)
 
-	lvl, err := logrus.ParseLevel(conf.Level)
+	level, err := logrus.ParseLevel(conf.Level)
 	if err != nil {
-		lvl = logrus.ErrorLevel
+		level = logrus.ErrorLevel
 	}
 
-	logrus.SetLevel(lvl)
+	logrus.SetLevel(level)
 
-	callerLevels := []logrus.Level{logrus.PanicLevel}
-	stackLevels := logrus.AllLevels
-	if !conf.Stack {
-		stackLevels = []logrus.Level{logrus.PanicLevel}
-	}
-
-	logrus.AddHook(logrusStack.NewHook(callerLevels, stackLevels))
-
+	// Base log field that will be in every log message
 	Entry = logrus.WithFields(logrus.Fields{
-		"application": conf.Name,
+		"application": conf.App,
 	})
 }
 
@@ -54,7 +45,7 @@ func Details() *logrus.Entry {
 	return details()
 }
 
-// Add log fields
+// Add addition fields to details of log
 func Add(fields Fields) *logrus.Entry {
 	logrusFields := make(logrus.Fields)
 
@@ -72,8 +63,8 @@ func details() *logrus.Entry {
 	}
 
 	fileName := path.Base(file) + ":" + strconv.Itoa(line)
-
 	function := runtime.FuncForPC(pc).Name()
 	funcName := function[strings.LastIndex(function, ".")+1:] + "()"
+
 	return Entry.WithField("file", fileName).WithField("function", funcName)
 }
