@@ -3,10 +3,7 @@ package config
 import (
 	"os"
 
-	"github.com/jobaldw/shared/log"
-
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	"github.com/tkanos/gonfig"
 )
 
@@ -23,10 +20,10 @@ type Config struct {
 
 // App struct
 type App struct {
-	Name       string       `json:"application,omitempty" bson:"application,omitempty"`
-	Port       int          `json:"port,omitempty" bson:"port,omitempty"`
-	LogLevel   logrus.Level `json:"log_level,omitempty" bson:"log_level,omitempty" `
-	StackTrace bool         `json:"stack_trace,omitempty" bson:"stack_trace,omitempty"`
+	Name       string `json:"application,omitempty" bson:"application,omitempty"`
+	Port       int    `json:"port,omitempty" bson:"port,omitempty"`
+	LogLevel   string `json:"log_level,omitempty" bson:"log_level,omitempty" `
+	StackTrace bool   `json:"stack_trace,omitempty" bson:"stack_trace,omitempty"`
 }
 
 // Datasource struct
@@ -57,12 +54,6 @@ func Marshal() (conf Config, err error) {
 			return conf, errors.WithMessage(err, "could not read datasource configurations")
 		}
 	}
-
-	log.Configure(log.Logger{
-		Name:  conf.App.Name,
-		Level: conf.App.LogLevel,
-		Stack: conf.App.StackTrace,
-	})
 
 	return
 }
