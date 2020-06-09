@@ -58,6 +58,5 @@ func Details() *logrus.Entry {
 	function := runtime.FuncForPC(pc).Name()
 	funcName := function[strings.LastIndex(function, ".")+1:] + "()"
 
-	Entry = logrus.WithField("file", fileName).WithField("function", funcName)
-	return Entry
+	return Entry.WithField("file", fileName).WithField("function", funcName)
 }
