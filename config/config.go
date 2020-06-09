@@ -22,10 +22,9 @@ type Config struct {
 
 // App struct
 type App struct {
-	Name       string `json:"application,omitempty" bson:"application,omitempty"`
-	Port       int    `json:"port,omitempty" bson:"port,omitempty"`
-	LogLevel   string `json:"log_level,omitempty" bson:"log_level,omitempty" `
-	StackTrace bool   `json:"stack_trace,omitempty" bson:"stack_trace,omitempty"`
+	Name     string `json:"application,omitempty" bson:"application,omitempty"`
+	Port     int    `json:"port,omitempty" bson:"port,omitempty"`
+	LogLevel string `json:"log_level,omitempty" bson:"log_level,omitempty" `
 }
 
 // Datasource struct
