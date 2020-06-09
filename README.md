@@ -66,13 +66,13 @@ Utilizes [sirupsen/logrus](https://github.com/sirupsen/logrus "sirupsen/logrus")
 
 ```json
 {
-	"application":"api",
-	"file":"file.go:10",
-	"function":"func()",
+    "application":"api",
+    "file":"file.go:10",
+    "function":"func()",
     "id": 123-456-7890,
-	"level":"info",
-	"msg":"a message",
-	"time":"2020-06-09T12:30:00-05:00"
+    "level":"info",
+    "msg":"a message",
+    "time":"2020-06-09T12:30:00-05:00"
 }
 ```
 
