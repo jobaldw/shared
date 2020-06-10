@@ -12,7 +12,7 @@ import (
 const (
 	appSource  = "config/application.json"
 	dataSource = "config/datasource.json"
-	depSource  = "config/dependentssource.json"
+	depSource  = "config/dependents.json"
 )
 
 // Config struct
