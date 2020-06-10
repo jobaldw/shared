@@ -34,12 +34,12 @@ func New(rel string, timeout int) (Client, error) {
 
 // Post request
 func (c *Client) Post(path string, headers, parameters map[string]string, body io.Reader) (response.Response, error) {
-	return c.do(http.MethodPut, path, headers, parameters, body)
+	return c.do(http.MethodPost, path, headers, parameters, body)
 }
 
 // Get request
 func (c *Client) Get(path string, headers, parameters map[string]string) (response.Response, error) {
-	return c.do(http.MethodPut, path, headers, parameters, nil)
+	return c.do(http.MethodGet, path, headers, parameters, nil)
 }
 
 // Put request
