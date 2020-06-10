@@ -10,31 +10,45 @@ import (
 )
 
 const (
-	dataSource = "config/datasource.json"
 	appSource  = "config/application.json"
+	dataSource = "config/datasource.json"
+	depSource  = "config/dependentssource.json"
 )
 
 // Config struct
 type Config struct {
-	App        App
-	Datasource Datasource
+	Application Application
+	Datasource  Datasource
+	Dependents  Dependents
 }
 
-// App struct
-type App struct {
-	Name     string `json:"application,omitempty" bson:"application,omitempty"`
-	Port     int    `json:"port,omitempty" bson:"port,omitempty"`
-	LogLevel string `json:"log_level,omitempty" bson:"log_level,omitempty" `
+// Application struct
+type Application struct {
+	Name     string `json:"application,omitempty"`
+	Port     int    `json:"port,omitempty"`
+	LogLevel string `json:"log_level,omitempty"`
+}
+
+// Dependents struct
+type Dependents struct {
+	Client  Client            `json:"client,omitempty"`
+	Clients map[string]Client `json:"clients,omitempty"`
+}
+
+// Client struct
+type Client struct {
+	URL     string `json:"url,omitempty"`
+	Timeout int    `json:"timeout,omitempty"`
 }
 
 // Datasource struct
 type Datasource struct {
-	Database  Database            `json:"database,omitempty"`
-	Databases map[string]Database `json:"databases,omitempty"`
+	Mongo  Mongo            `json:"database,omitempty"`
+	Mongos map[string]Mongo `json:"databases,omitempty"`
 }
 
-// Database struct
-type Database struct {
+// Mongo struct
+type Mongo struct {
 	Database    string            `json:"database,omitempty"`
 	URI         string            `json:"uri,omitempty"`
 	Collections map[string]string `json:"collections,omitempty"`
@@ -43,7 +57,7 @@ type Database struct {
 // Unmarshal configurables
 func Unmarshal() (conf Config, err error) {
 	if hasSource(appSource) {
-		err = read(appSource, &conf.App)
+		err = read(appSource, &conf.Application)
 		if err != nil {
 			return conf, fmt.Errorf("%s, %s '%s'", err, "could not read", appSource)
 		}
@@ -53,6 +67,13 @@ func Unmarshal() (conf Config, err error) {
 		err = read(dataSource, &conf.Datasource)
 		if err != nil {
 			return conf, fmt.Errorf("%s, %s '%s'", err, "could not read", dataSource)
+		}
+	}
+
+	if hasSource(depSource) {
+		err = read(dataSource, &conf.Dependents)
+		if err != nil {
+			return conf, fmt.Errorf("%s, %s '%s'", err, "could not read", depSource)
 		}
 	}
 
