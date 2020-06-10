@@ -71,7 +71,7 @@ func Unmarshal() (conf Config, err error) {
 	}
 
 	if hasSource(depSource) {
-		err = read(dataSource, &conf.Dependents)
+		err = read(depSource, &conf.Dependents)
 		if err != nil {
 			return conf, fmt.Errorf("%s, %s '%s'", err, "could not read", depSource)
 		}
