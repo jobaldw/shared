@@ -20,11 +20,11 @@ type Response struct {
 type Body struct {
 	String string
 	Bytes  []byte
-	IO     io.ReadCloser
+	IO     io.Reader
 }
 
 // Marshal response body
-func Marshal(body io.ReadCloser, structure interface{}) error {
+func Marshal(body io.Reader, structure interface{}) error {
 	err := json.NewDecoder(body).Decode(structure)
 	return fmt.Errorf("could not marshal response, %s", err)
 }
@@ -37,7 +37,7 @@ func (r *Response) Save(resp *http.Response) {
 }
 
 // helper functions
-func (b *Body) save(body io.ReadCloser) {
+func (b *Body) save(body io.Reader) {
 	b.IO = body
 
 	bodyBytes, err := ioutil.ReadAll(body)
