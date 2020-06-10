@@ -68,7 +68,7 @@ func (c *Client) do(method, endpoint string, headers, parameters map[string]stri
 	if err != nil {
 		return resp, fmt.Errorf("problem occured with request: %s", err)
 	}
-	defer r.Body.Close()
+	// defer r.Body.Close()
 
 	resp.Save(r)
 
