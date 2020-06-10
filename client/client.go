@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"path"
 	"time"
 
 	"github.com/jobaldw/shared/client/response"
@@ -52,10 +53,10 @@ func (c *Client) Delete(path string, headers, parameters map[string]string) (res
 }
 
 // helper functions
-func (c *Client) do(method, path string, headers, parameters map[string]string, body io.Reader) (response.Response, error) {
+func (c *Client) do(method, endpoint string, headers, parameters map[string]string, body io.Reader) (response.Response, error) {
 	resp := response.Response{}
 
-	c.URL.Path = path
+	c.URL.Path = path.Join(c.URL.Path, endpoint)
 	req, err := http.NewRequest(method, c.URL.String(), body)
 	if err != nil {
 		return resp, fmt.Errorf("problem occured building %s request: %s, %s", method, c.URL.String(), err)
