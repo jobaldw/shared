@@ -37,8 +37,10 @@ type Dependents struct {
 
 // Client struct
 type Client struct {
-	URL     string `json:"url,omitempty"`
-	Timeout int    `json:"timeout,omitempty"`
+	URL        string            `json:"url,omitempty"`
+	Timeout    int               `json:"timeout,omitempty"`
+	Headers    map[string]string `json:"headers"`
+	Parameters map[string]string `json:"parameters"`
 }
 
 // Datasource struct

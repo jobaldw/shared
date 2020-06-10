@@ -5,19 +5,22 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"time"
 )
 
 // Client struct
 type Client struct {
-	URL    string
+	URL    *url.URL
 	Client *http.Client
 }
 
 // New client
-func New(url string, timeout time.Duration) Client {
+func New(uri string, timeout time.Duration) Client {
 	return Client{
-		URL: url,
+		URL: &url.URL{
+			Host: uri,
+		},
 		Client: &http.Client{
 			Timeout: timeout * time.Second,
 		},
@@ -25,8 +28,8 @@ func New(url string, timeout time.Duration) Client {
 }
 
 // Get request
-func (c *Client) Get(headers map[string]string) (*http.Response, error) {
-	req, err := http.NewRequest("GET", c.URL, nil)
+func (c *Client) Get(headers, parameters map[string]string) (*http.Response, error) {
+	req, err := http.NewRequest("GET", c.URL.Host, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -34,6 +37,12 @@ func (c *Client) Get(headers map[string]string) (*http.Response, error) {
 	for k, v := range headers {
 		req.Header.Add(k, v)
 	}
+
+	q := req.URL.Query()
+	for k, v := range parameters {
+		q.Add(k, v)
+	}
+	req.URL.RawQuery = q.Encode()
 
 	return c.Client.Do(req)
 }
