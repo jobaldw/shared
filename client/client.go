@@ -1,12 +1,13 @@
 package client
 
 import (
-	"encoding/json"
+	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/jobaldw/shared/client/response"
 )
 
 // Client struct
@@ -16,24 +17,83 @@ type Client struct {
 }
 
 // New client
-func New(uri string, timeout time.Duration) Client {
+func New(uri string, timeout int) Client {
 	return Client{
 		URL: &url.URL{
 			Host: uri,
 		},
 		Client: &http.Client{
-			Timeout: timeout * time.Second,
+			Timeout: time.Duration(timeout) * time.Second,
 		},
 	}
 }
 
-// Get request
-func (c *Client) Get(headers, parameters map[string]string) (*http.Response, error) {
-	req, err := http.NewRequest("GET", c.URL.Host, nil)
+// Post request
+func (c *Client) Post(endpoint string, headers, parameters map[string]string, body io.Reader) (resp response.Response, err error) {
+	url := fmt.Sprintf("%s%s", c.URL.Host, endpoint)
+	req, err := http.NewRequest(http.MethodPost, url, body)
 	if err != nil {
-		return nil, err
+		err = fmt.Errorf("problem occured invoking %s: %s, %s", http.MethodPost, url, err)
+		return
 	}
 
+	req = prepRequest(req, headers, parameters)
+	return c.do(req)
+}
+
+// Get request
+func (c *Client) Get(endpoint string, headers, parameters map[string]string) (resp response.Response, err error) {
+	url := fmt.Sprintf("%s%s", c.URL.Host, endpoint)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		err = fmt.Errorf("problem occured invoking %s: %s, %s", http.MethodGet, url, err)
+		return
+	}
+
+	req = prepRequest(req, headers, parameters)
+	return c.do(req)
+}
+
+// Put request
+func (c *Client) Put(endpoint string, headers, parameters map[string]string, body io.Reader) (resp response.Response, err error) {
+	url := fmt.Sprintf("%s%s", c.URL.Host, endpoint)
+	req, err := http.NewRequest(http.MethodPut, url, body)
+	if err != nil {
+		err = fmt.Errorf("problem occured invoking %s: %s, %s", http.MethodPut, url, err)
+		return
+	}
+
+	req = prepRequest(req, headers, parameters)
+	return c.do(req)
+}
+
+// Delete request
+func (c *Client) Delete(endpoint string, headers, parameters map[string]string) (resp response.Response, err error) {
+	url := fmt.Sprintf("%s%s", c.URL.Host, endpoint)
+	req, err := http.NewRequest(http.MethodDelete, url, nil)
+	if err != nil {
+		err = fmt.Errorf("problem occured invoking %s: %s, %s", http.MethodDelete, url, err)
+		return
+	}
+
+	req = prepRequest(req, headers, parameters)
+	return c.do(req)
+}
+
+// helper functions
+func (c *Client) do(req *http.Request) (resp response.Response, err error) {
+	r, err := c.Client.Do(req)
+	if err != nil {
+		return
+	}
+	defer r.Body.Close()
+
+	resp.Save(r)
+
+	return
+}
+
+func prepRequest(req *http.Request, headers, parameters map[string]string) *http.Request {
 	for k, v := range headers {
 		req.Header.Add(k, v)
 	}
@@ -44,20 +104,5 @@ func (c *Client) Get(headers, parameters map[string]string) (*http.Response, err
 	}
 	req.URL.RawQuery = q.Encode()
 
-	return c.Client.Do(req)
-}
-
-// StringResp of response body
-func StringResp(body io.ReadCloser) (string, error) {
-	bodyBytes, err := ioutil.ReadAll(body)
-	if err != nil {
-		return "", err
-	}
-
-	return string(bodyBytes), err
-}
-
-// MarshalResp of response body
-func MarshalResp(body io.ReadCloser, structure interface{}) error {
-	return json.NewDecoder(body).Decode(structure)
+	return req
 }
