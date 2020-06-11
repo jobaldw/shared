@@ -75,6 +75,17 @@ func (c *Client) do(method, path string, headers, parameters map[string]string, 
 	return resp, nil
 }
 
+// Add parameters
+func (c *Client) Add(clean bool, params map[string]string) {
+	if clean {
+		c.Parameters = map[string]string{}
+	}
+
+	for k, v := range params {
+		c.Parameters[k] = v
+	}
+}
+
 func prepRequest(req *http.Request, headers, parameters map[string]string) *http.Request {
 	for k, v := range headers {
 		req.Header.Add(k, v)
