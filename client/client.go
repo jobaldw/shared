@@ -64,7 +64,6 @@ func (c *Client) do(method, relPath string, headers, parameters map[string]strin
 	req, err := http.NewRequest(method, c.URL.String(), body)
 	if err != nil {
 		return resp, fmt.Errorf("problem occured building %s request: %s, %s", method, c.URL.String(), err)
-
 	}
 
 	req = prepRequest(req, headers, parameters)
@@ -72,7 +71,6 @@ func (c *Client) do(method, relPath string, headers, parameters map[string]strin
 	if err != nil {
 		return resp, fmt.Errorf("problem occured with request: %s", err)
 	}
-	// defer r.Body.Close()
 
 	resp.Save(r)
 
