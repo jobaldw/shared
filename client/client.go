@@ -55,6 +55,17 @@ func (c *Client) Delete(path string) (response.Response, error) {
 	return c.do(http.MethodDelete, path, c.Headers, c.Parameters, nil)
 }
 
+// AddParams to client
+func (c *Client) AddParams(clean bool, params map[string]string) {
+	if clean {
+		c.Parameters = map[string]string{}
+	}
+
+	for k, v := range params {
+		c.Parameters[k] = v
+	}
+}
+
 // helper functions
 func (c *Client) do(method, path string, headers, parameters map[string]string, body io.Reader) (response.Response, error) {
 	resp := response.Response{}
@@ -73,17 +84,6 @@ func (c *Client) do(method, path string, headers, parameters map[string]string, 
 	resp.Save(r)
 
 	return resp, nil
-}
-
-// Add parameters
-func (c *Client) Add(clean bool, params map[string]string) {
-	if clean {
-		c.Parameters = map[string]string{}
-	}
-
-	for k, v := range params {
-		c.Parameters[k] = v
-	}
 }
 
 func prepRequest(req *http.Request, headers, parameters map[string]string) *http.Request {
