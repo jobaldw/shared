@@ -13,19 +13,23 @@ import (
 
 // Client struct
 type Client struct {
-	URL    *url.URL
-	Client *http.Client
+	URL        *url.URL
+	Parameters map[string]string
+	Headers    map[string]string
+	Client     *http.Client
 }
 
 // New client
-func New(rel string, timeout int) (Client, error) {
+func New(rel string, timeout int, headers, parameters map[string]string) (Client, error) {
 	uri, err := url.Parse(rel)
 	if err != nil {
 		return Client{}, fmt.Errorf("could not create client, %s", err)
 	}
 
 	return Client{
-		URL: uri,
+		URL:        uri,
+		Parameters: parameters,
+		Headers:    headers,
 		Client: &http.Client{
 			Timeout: time.Duration(timeout) * time.Second,
 		},
@@ -33,23 +37,23 @@ func New(rel string, timeout int) (Client, error) {
 }
 
 // Post request
-func (c *Client) Post(path string, headers, parameters map[string]string, body io.Reader) (response.Response, error) {
-	return c.do(http.MethodPost, path, headers, parameters, body)
+func (c *Client) Post(path string, body io.Reader) (response.Response, error) {
+	return c.do(http.MethodPost, path, c.Headers, c.Parameters, body)
 }
 
 // Get request
-func (c *Client) Get(path string, headers, parameters map[string]string) (response.Response, error) {
-	return c.do(http.MethodGet, path, headers, parameters, nil)
+func (c *Client) Get(path string) (response.Response, error) {
+	return c.do(http.MethodGet, path, c.Headers, c.Parameters, nil)
 }
 
 // Put request
-func (c *Client) Put(path string, headers, parameters map[string]string, body io.Reader) (response.Response, error) {
-	return c.do(http.MethodPut, path, headers, parameters, body)
+func (c *Client) Put(path string, body io.Reader) (response.Response, error) {
+	return c.do(http.MethodPut, path, c.Headers, c.Parameters, body)
 }
 
 // Delete request
-func (c *Client) Delete(path string, headers, parameters map[string]string) (response.Response, error) {
-	return c.do(http.MethodDelete, path, headers, parameters, nil)
+func (c *Client) Delete(path string) (response.Response, error) {
+	return c.do(http.MethodDelete, path, c.Headers, c.Parameters, nil)
 }
 
 // helper functions
