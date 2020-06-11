@@ -19,7 +19,7 @@ type Resp struct {
 }
 
 // New mux router
-func New(app string) http.Handler {
+func New(app string) *mux.Router {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/health", health(app)).Methods(http.MethodGet)

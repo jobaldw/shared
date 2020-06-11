@@ -1,8 +1,6 @@
 package response
 
 import (
-	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -21,12 +19,6 @@ type Body struct {
 	String string
 	Bytes  []byte
 	IO     io.Reader
-}
-
-// Marshal response body
-func Marshal(body io.Reader, structure interface{}) error {
-	err := json.NewDecoder(body).Decode(structure)
-	return fmt.Errorf("could not marshal response, %s", err)
 }
 
 // Save response body
