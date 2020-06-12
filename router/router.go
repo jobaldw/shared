@@ -15,7 +15,7 @@ type Resp struct {
 
 	Status string `json:"status,omitempty"`
 	MSG    string `json:"msg,omitempty"`
-	ERR    string `json:"error,omitempty"`
+	ERR    error  `json:"error,omitempty"`
 }
 
 // New mux router
