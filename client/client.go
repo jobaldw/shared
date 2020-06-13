@@ -21,7 +21,7 @@ type Client struct {
 }
 
 // New client
-func New(rel string, timeout int, headers, parameters map[string]string) (Client, error) {
+func New(rel, health string, timeout int, headers, parameters map[string]string) (Client, error) {
 	uri, err := url.Parse(rel)
 	if err != nil {
 		return Client{}, fmt.Errorf("could not create client, %s", err)
@@ -31,6 +31,7 @@ func New(rel string, timeout int, headers, parameters map[string]string) (Client
 		URL:        uri,
 		Parameters: parameters,
 		Headers:    headers,
+		Health:     health,
 		Client: &http.Client{
 			Timeout: time.Duration(timeout) * time.Second,
 		},

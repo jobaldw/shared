@@ -97,7 +97,6 @@ func ready(name string, clients map[string]client.Client) http.HandlerFunc {
 			}
 		}
 
-		resp.MSG = statusNotReady
 		resp.MSG = statusReady
 		Response(w, http.StatusOK, resp)
 	}

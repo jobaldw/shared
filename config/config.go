@@ -39,8 +39,9 @@ type Dependents struct {
 type Client struct {
 	URL        string            `json:"url,omitempty"`
 	Timeout    int               `json:"timeout,omitempty"`
-	Headers    map[string]string `json:"headers"`
-	Parameters map[string]string `json:"parameters"`
+	Headers    map[string]string `json:"headers,omitempty"`
+	Parameters map[string]string `json:"parameters,omitempty"`
+	Health     string            `json:"health,omitempty"`
 }
 
 // Datasource struct
