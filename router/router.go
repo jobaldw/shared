@@ -76,25 +76,24 @@ func health(name string) http.HandlerFunc {
 
 func ready(name string, clients map[string]client.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		resp := Resp{Status: statusUp, MSG: fmt.Sprintf("%s is ready", name)}
+		resp := Resp{Status: statusDown, MSG: fmt.Sprintf("%s is not ready", name)}
 
 		for _, v := range clients {
 			res, err := v.Client.Get(v.Health)
 			if err != nil {
-				resp.Status = statusDown
 				resp.ERR = fmt.Errorf("could not check health of %s, %s", v.URL.String(), err)
 				Response(w, http.StatusNotFound, resp)
 				return
 			}
 
 			if !IsSuccessful(res.StatusCode) {
-				resp.Status = statusDown
-				resp.MSG = fmt.Sprintf("%s is not ready", name)
 				Response(w, http.StatusServiceUnavailable, resp)
 				return
 			}
 		}
 
+		resp.Status = statusUp
+		resp.MSG = fmt.Sprintf("%s is ready", name)
 		Response(w, http.StatusOK, resp)
 	}
 }
