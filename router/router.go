@@ -81,8 +81,7 @@ func ready(name string, clients map[string]client.Client) http.HandlerFunc {
 		for _, v := range clients {
 			res, err := v.Client.Get(v.Health)
 			if err != nil {
-				resp.Payload = res
-				resp.MSG = fmt.Sprintf("%d", res.StatusCode)
+				resp.MSG = err.Error()
 				resp.ERR = fmt.Errorf("could not check health of %s, %s", v.URL.String(), err)
 				Response(w, http.StatusNotFound, resp)
 				return
