@@ -22,7 +22,7 @@ type Resp struct {
 
 	Status string `json:"status,omitempty"`
 	MSG    string `json:"msg,omitempty"`
-	ERR    error  `json:"error,omitempty"`
+	ERR    string `json:"error,omitempty"`
 }
 
 // New mux router
@@ -78,16 +78,15 @@ func ready(name string, clients map[string]client.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		resp := Resp{Status: statusDown, MSG: fmt.Sprintf("%s is not ready", name)}
 
-		for _, v := range clients {
-			res, err := v.Client.Get(v.Health)
+		for _, client := range clients {
+			res, err := client.Get(client.Health)
 			if err != nil {
-				resp.MSG = err.Error()
-				resp.ERR = fmt.Errorf("could not check health of %s, %s", v.URL.String(), err)
+				resp.ERR = fmt.Sprintf("could not check health of %s, %s", v.URL.String(), err)
 				Response(w, http.StatusNotFound, resp)
 				return
 			}
 
-			if !IsSuccessful(res.StatusCode) {
+			if !IsSuccessful(res.Code) {
 				Response(w, http.StatusServiceUnavailable, resp)
 				return
 			}
