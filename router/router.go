@@ -81,7 +81,7 @@ func ready(name string, clients map[string]client.Client) http.HandlerFunc {
 		for _, client := range clients {
 			res, err := client.Get(client.Health)
 			if err != nil {
-				resp.ERR = fmt.Sprintf("could not check health of %s, %s", v.URL.String(), err)
+				resp.ERR = fmt.Sprintf("could not check health of %s, %s", client.URL.String(), err)
 				Response(w, http.StatusNotFound, resp)
 				return
 			}
