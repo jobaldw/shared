@@ -78,7 +78,7 @@ Utilizes the [sirupsen/logrus](https://github.com/sirupsen/logrus "sirupsen/logr
 
 **Note**: all log messages will have *application*, *level*, *msg* and *time* fields by default. See **Usage**  for how to log with additional fields.
 
-### Set Up
+### log Set Up
 
 ``` go
 package main
@@ -92,7 +92,7 @@ func main() {
 }
 ```
 
-### Usage
+### log Usage
 
 ``` go
 func foo() {
@@ -108,7 +108,7 @@ Utilizes the [gorilla/mux](https://github.com/gorilla/mux "gorilla/mux - v1.7.4"
 
 **Note**: This package is dependent on the **Client** package.
 
-### Resp struct
+*Resp - client responses.*
 
 ``` go
 type Resp struct {
@@ -121,7 +121,7 @@ type Resp struct {
 }
 ```
 
-### router Usage
+### router Set Up
 
 In order to use the router.New() function, we will use the `clients` created in the **config** section.
 
@@ -133,9 +133,17 @@ import "github.com/jobaldw/shared/router"
 func main() {
     ...
     newRouter := router.New("api", clients) // see config to view "clients" declaration
+}
+```
 
-    newRouter.HandleFunc("/endpoint", foo()).Methods(http.MethodGet)
+### router Usage
+
+You can add as many endpoints as you want. Each instantiation needs a function to call and each function can have its own personalized response.
+
+``` go
+func main() {
     ...
+    newRouter.HandleFunc("/endpoint", foo()).Methods(http.MethodGet)
 }
 
 func foo() http.HandlerFunc {
