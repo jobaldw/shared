@@ -5,10 +5,18 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/pkg/errors"
+	"github.com/jobaldw/shared/client"
+
+	"github.com/gorilla/mux"
 )
 
-// Resp from client
+// const status'
+var (
+	statusDown = "down"
+	statusUp   = "up"
+)
+
+// Resp struct
 type Resp struct {
 	ID      interface{} `json:"id,omitempty"`
 	Payload interface{} `json:"payload,omitempty"`
@@ -18,45 +26,21 @@ type Resp struct {
 	ERR    string `json:"error,omitempty"`
 }
 
-// Health check
-func Health(name string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		resp := Resp{Status: "Up", MSG: fmt.Sprintf("%s is healthy", name)}
-		Response(w, http.StatusOK, resp)
-	}
+// New mux router
+func New(app string, clients map[string]client.Client) *mux.Router {
+	r := mux.NewRouter()
+
+	r.HandleFunc("/health", health(app)).Methods(http.MethodGet)
+	r.HandleFunc("/ready", ready(app, clients)).Methods(http.MethodGet)
+
+	return r
 }
 
-// Ready state
-// FIXME: add controller package to shared library
-// func Ready(name string, ctrl controller.Controller) http.HandlerFunc {
-// 	return func(w http.ResponseWriter, r *http.Request) {
-// 		resp := Resp{Status: "Up"}
-
-// 		if err := ctrl.Check(); err != nil {
-// 			resp.Status = "Down"
-// 			resp.ERR = err.Error()
-
-// 			log.Entry.WithField("method", "Ready").Error(err)
-// 			Response(w, http.StatusGatewayTimeout, resp)
-// 			return
-// 		}
-
-// 		resp.MSG = fmt.Sprintf("%s is ready", name)
-
-// 		log.Entry.WithFields(logrus.Fields{
-// 			"method": "Ready",
-// 			"status": resp.Status,
-// 		},
-// 		).Info(resp.MSG)
-// 		Response(w, http.StatusOK, resp)
-// 	}
-// }
-
-// Response writes to client
+// Response to client
 func Response(w http.ResponseWriter, code int, payload interface{}) error {
 	response, err := json.Marshal(payload)
 	if err != nil {
-		return errors.WithMessage(err, "could not marshal payload")
+		return fmt.Errorf("%s, %s", err, "could not marshal payload")
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -64,8 +48,53 @@ func Response(w http.ResponseWriter, code int, payload interface{}) error {
 
 	_, err = w.Write(response)
 	if err != nil {
-		return errors.WithMessage(err, "could not write response")
+		return fmt.Errorf("%s, %s", err, "could not write response")
 	}
 
 	return err
+}
+
+// IsSuccessful response code
+func IsSuccessful(code int) bool {
+	if (code > 199) && (code < 300) {
+		return true
+	}
+	return false
+}
+
+// Vars from request
+func Vars(r *http.Request) map[string]string {
+	return mux.Vars(r)
+}
+
+// Helper functions
+func health(name string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		resp := Resp{Status: statusUp, MSG: fmt.Sprintf("%s is healthy", name)}
+		Response(w, http.StatusOK, resp)
+	}
+}
+
+func ready(name string, clients map[string]client.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		resp := Resp{Status: statusDown, MSG: fmt.Sprintf("%s is not ready", name)}
+
+		for clientKey, client := range clients {
+			res, err := client.Get(client.Health)
+			if err != nil {
+				resp.ERR = fmt.Sprintf("could not check health of %s, %s", clientKey, err)
+				Response(w, http.StatusNotFound, resp)
+				return
+			}
+
+			if !IsSuccessful(res.Code) {
+				Response(w, http.StatusServiceUnavailable, resp)
+				return
+			}
+		}
+
+		resp.Status = statusUp
+		resp.MSG = fmt.Sprintf("%s is ready", name)
+		Response(w, http.StatusOK, resp)
+	}
 }
