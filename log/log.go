@@ -49,6 +49,7 @@ func Add(fields Fields) *logrus.Entry {
 	return details().WithFields(logrus.Fields(logrusFields))
 }
 
+// Helper function
 func details() *logrus.Entry {
 	pc, file, line, ok := runtime.Caller(2)
 	if !ok {

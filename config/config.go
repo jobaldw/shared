@@ -29,6 +29,19 @@ type Application struct {
 	LogLevel string `json:"log_level,omitempty"`
 }
 
+// Datasource struct
+type Datasource struct {
+	Mongo  Mongo            `json:"database,omitempty"`
+	Mongos map[string]Mongo `json:"databases,omitempty"`
+}
+
+// Mongo struct
+type Mongo struct {
+	Database    string            `json:"database,omitempty"`
+	URI         string            `json:"uri,omitempty"`
+	Collections map[string]string `json:"collections,omitempty"`
+}
+
 // Dependents struct
 type Dependents struct {
 	Client  Client            `json:"client,omitempty"`
@@ -42,19 +55,6 @@ type Client struct {
 	Headers    map[string]string `json:"headers,omitempty"`
 	Parameters map[string]string `json:"parameters,omitempty"`
 	Health     string            `json:"health,omitempty"`
-}
-
-// Datasource struct
-type Datasource struct {
-	Mongo  Mongo            `json:"database,omitempty"`
-	Mongos map[string]Mongo `json:"databases,omitempty"`
-}
-
-// Mongo struct
-type Mongo struct {
-	Database    string            `json:"database,omitempty"`
-	URI         string            `json:"uri,omitempty"`
-	Collections map[string]string `json:"collections,omitempty"`
 }
 
 // Unmarshal configurables
@@ -83,6 +83,7 @@ func Unmarshal() (conf Config, err error) {
 	return
 }
 
+// Helper functions
 func hasSource(file string) bool {
 	if _, err := os.Stat(file); os.IsNotExist(err) {
 		return false

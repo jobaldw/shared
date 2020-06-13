@@ -8,7 +8,7 @@
 
 Reads in **json** key value pairs that are unmarshaled into one configuration struct that can be passed around through an application.
 
-### Example config/application.json:
+### Example config/application.json
 
 ```json
 {
@@ -22,24 +22,24 @@ Reads in **json** key value pairs that are unmarshaled into one configuration st
 
 ``` go
 type Config struct {
-	App App
-	Datasource Datasource
+    App App
+    Datasource Datasource
 }
 ```
 
 This package relies on a directory that should be at the root of the application called `config`. The **Unmarshal()** function looks for two json files named `application.json` and `datasource.json`.
 
 - config
-	- application.json  // *gets read into the App struct*
-	- datasource.json // *gets read into the Datasource struct*
+  - application.json  // *gets read into the App struct*
+  - datasource.json // *gets read into the Datasource struct*
 
 *App - configurables for common application related objects.*
 
 ``` go
 type App struct {
-	Name string
-	Port int
-	LogLevel string
+    Name string
+    Port int
+    LogLevel string
 }
 ```
 
@@ -47,14 +47,14 @@ type App struct {
 
 ``` go
 type Datasource struct {
-	Database  Database
-	Databases map[string]Database
+    Database  Database
+    Databases map[string]Database
 }
 
 type Database struct {
-	Database string
-	URI string
-	Collections map[string]string
+    Database string
+    URI string
+    Collections map[string]string
 }
 ```
 
@@ -62,7 +62,7 @@ type Database struct {
 
 Utilizes [sirupsen/logrus](https://github.com/sirupsen/logrus "sirupsen/logrus") logging pacakge. Wraps a few functions to help configure and help make log messages more informational.
 
-### Example json message:
+### Example json message
 
 ```json
 {
@@ -93,6 +93,7 @@ func main() {
 ```
 
 ### Usage
+
 ``` go
 func foo() {
     log.Info("a message") // prints default fields

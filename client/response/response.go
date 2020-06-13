@@ -28,7 +28,7 @@ func (r *Response) Save(resp *http.Response) {
 	r.Body.save(resp.Body)
 }
 
-// helper functions
+// helper function
 func (b *Body) save(body io.Reader) {
 	b.IO = body
 

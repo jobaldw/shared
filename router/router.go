@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"github.com/jobaldw/shared/client"
+
+	"github.com/gorilla/mux"
 )
 
 // const status'
@@ -78,10 +79,10 @@ func ready(name string, clients map[string]client.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		resp := Resp{Status: statusDown, MSG: fmt.Sprintf("%s is not ready", name)}
 
-		for _, client := range clients {
+		for clientKey, client := range clients {
 			res, err := client.Get(client.Health)
 			if err != nil {
-				resp.ERR = fmt.Sprintf("could not check health of %s, %s", client.URL.String(), err)
+				resp.ERR = fmt.Sprintf("could not check health of %s, %s", clientKey, err)
 				Response(w, http.StatusNotFound, resp)
 				return
 			}
