@@ -30,31 +30,48 @@ type Config struct {
 This package relies on a directory that should be at the root of the application called `config`. The **Unmarshal()** function looks for two json files named `application.json` and `datasource.json`.
 
 - config
-  - application.json  // *gets read into the App struct*
-  - datasource.json // *gets read into the Datasource struct*
+  - application.json // *gets read into the App struct*
+  - datasource.json  // *gets read into the Datasource struct*
+  - dependents.json  // *gets read into the Dependents struct*
 
 *App - configurables for common application related objects.*
 
 ``` go
 type App struct {
-    Name string
-    Port int
-    LogLevel string
-}
+    Name     string `json:"application,omitempty"`
+    Port     int    `json:"port,omitempty"`
+    LogLevel string `json:"log_level,omitempty"`
 ```
 
 *Datasource - configurations for one or more mongo database objects.*
 
 ``` go
 type Datasource struct {
-    Database  Database
-    Databases map[string]Database
+    Mongo  Mongo            `json:"database,omitempty"`
+    Mongos map[string]Mongo `json:"databases,omitempty"`
+
+
+type Mongo struct {
+    Database    string            `json:"database,omitempty"`
+    URI         string            `json:"uri,omitempty"`
+    Collections map[string]string `json:"collections,omitempty"`
+}
+```
+
+*Dependents - configurations for one or more api client objects.*
+
+``` go
+type Dependents struct {
+    Client  Client            `json:"client,omitempty"`
+    Clients map[string]Client `json:"clients,omitempty"`
 }
 
-type Database struct {
-    Database string
-    URI string
-    Collections map[string]string
+type Client struct {
+    URL        string            `json:"url,omitempty"`
+    Timeout    int               `json:"timeout,omitempty"`
+    Headers    map[string]string `json:"headers,omitempty"`
+    Parameters map[string]string `json:"parameters,omitempty"`
+    Health     string            `json:"health,omitempty"`
 }
 ```
 
