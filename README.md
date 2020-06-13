@@ -60,7 +60,7 @@ type Database struct {
 
 ## log
 
-Utilizes [sirupsen/logrus](https://github.com/sirupsen/logrus "sirupsen/logrus") logging pacakge. Wraps a few functions to help configure and help make log messages more informational.
+Utilizes the [sirupsen/logrus](https://github.com/sirupsen/logrus "sirupsen/logrus - v1.6.0") logging pacakge. Wraps a few functions to help configure and help make log messages more informational.
 
 ### Example json message
 
@@ -99,5 +99,71 @@ func foo() {
     log.Info("a message") // prints default fields
     log.Details().Info("a message") // prints default fields, file, and function
     log.Add(log.Fields{"id": 123-456-7890}).Info("a message") // prints Details() and any additional fields specified
+}
+```
+
+## router
+
+Utilizes the [gorilla/mux](https://github.com/gorilla/mux "gorilla/mux - v1.7.4") routing and url matcher pacakge. Primarly initializes a mux.Router with health and ready check endpoints and writes to the client.
+
+**Note**: This package is dependent on the **Client** package.
+
+### Resp struct
+
+``` go
+type Resp struct {
+    ID      interface{} `json:"id,omitempty"`
+    Payload interface{} `json:"payload,omitempty"`
+
+    Status string `json:"status,omitempty"`
+    MSG    string `json:"msg,omitempty"`
+    ERR    string `json:"error,omitempty"`
+}
+```
+
+### router Usage
+
+In order to use the router.New() function, we will use the `clients` created in the **config** section.
+
+``` go
+package main
+
+import "github.com/jobaldw/shared/router"
+
+func main() {
+    ...
+    newRouter := router.New("api", clients) // see config to view "clients" declaration
+
+    newRouter.HandleFunc("/endpoint", foo()).Methods(http.MethodGet)
+    ...
+}
+
+func foo() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        payload := struct{
+            ID string
+        }{
+            ID: "abc123",
+        }
+
+        resp := router.Resp{Status: "Up", MSG: "hello world", Payload: payload}
+
+        router.Response(w, 200, resp)
+        return
+    }
+}
+```
+
+#### Output
+
+The status of this response is `200 OK`
+
+``` json
+{
+    "payload": {
+        "ID": "abc123"
+    },
+    "status": "Up",
+    "msg": "hello world"
 }
 ```
