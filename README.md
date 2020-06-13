@@ -4,94 +4,6 @@
 
 ![JB Desgins](https://github.com/jobaldw/shared/blob/master/jb-icon.jpg)
 
-## client
-
-Makes http client calls simpler while still allowing for customization for any CRUD application.
-
-*Client - client specific variables.*
-
-``` go
-type Client struct {
-    Parameters map[string]string
-    Headers    map[string]string
-    Health     string
-
-    URL    *url.URL
-    Client *http.Client
-}
-```
-
-*Response - dependent client responses.*
-
-``` go
-type Response struct {
-    Status string
-    Code   int
-
-    Body Body
-}
-
-type Body struct {
-    String string
-    Bytes  []byte
-    IO     io.Reader
-}
-```
-
-### client Set Up
-
-For mulitple clients, range over every client object keeping the same key and retreiving that key's values neccessary to build a new client. For one client, do the smae without ranging.
-
-``` go
-package main
-
-import "github.com/jobaldw/shared/client"
-
-func main() {
-    ...
-    clients := make(map[string]client.Client)
-    for key, value := range conf.Dependents {
-        newClient, err := client.New(value.URL, value.Health, value.Timeout, value.Headers, value.Parameters)
-        if err != nil {
-            return Controller{}, err
-        }
-
-        clients[key] = newClient
-    }
-    ...
-}
-```
-
-### client Usage
-
-#### http request
-
-These http request all return a response.Response or an error.
-
-``` go
-func main() {
-    ...
-
-    clients["key"].Get("path") /* or */ client.Get("path")
-    clients["key"].Put("path", body) /* or */ client.Put("path", body)
-    clients["key"].Post("path", body) /* or */ client.Post("path", body)
-    clients["key"].Delete("path") /* or */ client.Delete("path")
-}
-```
-
-#### adding parameters
-
-When adding parameters to a http request, the `client.AddParams()` function allows fir the option to remove current parameters.
-
-``` go
-func foo() {
-    // to remove current, add new parameter
-    clients["key"].AddParams(true, map[string]string{"param1": "value"})
-    //or
-    client.AddParams(true, map[string]string{"param1": "value"})
-}
-```
-
 ## config
 
 Reads in **json** key value pairs that are unmarshaled into one configuration struct that can be passed around through an application.
@@ -207,11 +119,99 @@ func foo() {
 }
 ```
 
+## client
+
+Makes http client calls simpler while still allowing for customization for any CRUD application.
+
+*Client - client specific variables.*
+
+``` go
+type Client struct {
+    Parameters map[string]string
+    Headers    map[string]string
+    Health     string
+
+    URL    *url.URL
+    Client *http.Client
+}
+```
+
+*Response - dependent client responses.*
+
+``` go
+type Response struct {
+    Status string
+    Code   int
+
+    Body Body
+}
+
+type Body struct {
+    String string
+    Bytes  []byte
+    IO     io.Reader
+}
+```
+
+### client Set Up
+
+For mulitple clients, range over every client object keeping the same key and retreiving that key's values neccessary to build a new client. For one client, do the smae without ranging.
+
+``` go
+package main
+
+import "github.com/jobaldw/shared/client"
+
+func main() {
+    ...
+    clients := make(map[string]client.Client)
+    for key, value := range conf.Dependents {
+        newClient, err := client.New(value.URL, value.Health, value.Timeout, value.Headers, value.Parameters)
+        if err != nil {
+            return Controller{}, err
+        }
+
+        clients[key] = newClient
+    }
+    ...
+}
+```
+
+### client Usage
+
+#### http request
+
+These http request all return a response.Response or an error.
+
+``` go
+func main() {
+    ...
+
+    clients["key"].Get("path") /* or */ client.Get("path")
+    clients["key"].Put("path", body) /* or */ client.Put("path", body)
+    clients["key"].Post("path", body) /* or */ client.Post("path", body)
+    clients["key"].Delete("path") /* or */ client.Delete("path")
+}
+```
+
+#### adding parameters
+
+When adding parameters to a http request, the `client.AddParams()` function allows fir the option to remove current parameters.
+
+``` go
+func foo() {
+    // to remove current, add new parameter
+    clients["key"].AddParams(true, map[string]string{"param1": "value"})
+    //or
+    client.AddParams(true, map[string]string{"param1": "value"})
+}
+```
+
 ## router
 
 Utilizes the [gorilla/mux](https://github.com/gorilla/mux "gorilla/mux - v1.7.4") routing and url matcher pacakge. Primarly initializes a mux.Router with health and ready check endpoints and writes to the client.
 
-**Note**: This package is dependent on the **Client** package.
+**Note**: This package is dependent on the **client** package.
 
 *Resp - api client responses.*
 
@@ -228,7 +228,7 @@ type Resp struct {
 
 ### router Set Up
 
-In order to use the `router.New()` function, we will use the `clients` created in the **config** section.
+In order to use the `router.New()` function, we will use the `clients` created in the **client** section.
 
 ``` go
 package main
