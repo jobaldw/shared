@@ -6,6 +6,15 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/jobaldw/shared/client"
+)
+
+// const status'
+const (
+	statusNotReady = "resource is not available"
+	statusReady    = "resource is available"
+	statusDown     = "down"
+	statusUp       = "up"
 )
 
 // Resp struct
@@ -19,19 +28,13 @@ type Resp struct {
 }
 
 // New mux router
-func New(app string) *mux.Router {
+func New(app string, clients map[string]client.Client) *mux.Router {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/health", health(app)).Methods(http.MethodGet)
+	r.HandleFunc("/ready", ready(app, clients)).Methods(http.MethodGet)
 
 	return r
-}
-
-func health(name string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		resp := Resp{Status: "Up", MSG: fmt.Sprintf("%s is healthy", name)}
-		Response(w, http.StatusOK, resp)
-	}
 }
 
 // Response to client
@@ -58,4 +61,44 @@ func IsSuccessful(code int) bool {
 		return true
 	}
 	return false
+}
+
+// Vars from request
+func Vars(r *http.Request) map[string]string {
+	return mux.Vars(r)
+}
+
+// Helper functions
+func health(name string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		resp := Resp{Status: statusUp, MSG: fmt.Sprintf("%s is healthy", name)}
+		Response(w, http.StatusOK, resp)
+	}
+}
+
+func ready(name string, clients map[string]client.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		resp := Resp{Status: statusDown, MSG: fmt.Sprintf("%s is healthy", name)}
+
+		for _, v := range clients {
+			res, err := v.Client.Get(v.Health)
+			if err != nil {
+				resp.Status = statusDown
+				resp.ERR = err
+				Response(w, http.StatusNotFound, resp)
+				return
+			}
+
+			if !IsSuccessful(res.StatusCode) {
+				resp.Status = statusDown
+				resp.MSG = statusNotReady
+				Response(w, http.StatusServiceUnavailable, resp)
+				return
+			}
+		}
+
+		resp.MSG = statusNotReady
+		resp.MSG = statusReady
+		Response(w, http.StatusOK, resp)
+	}
 }

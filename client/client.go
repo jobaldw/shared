@@ -12,10 +12,12 @@ import (
 
 // Client struct
 type Client struct {
-	URL        *url.URL
 	Parameters map[string]string
 	Headers    map[string]string
-	Client     *http.Client
+	Health     string
+
+	URL    *url.URL
+	Client *http.Client
 }
 
 // New client
