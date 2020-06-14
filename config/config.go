@@ -50,11 +50,10 @@ type Dependents struct {
 
 // Client struct
 type Client struct {
-	URL        string            `json:"url,omitempty"`
-	Timeout    int               `json:"timeout,omitempty"`
-	Headers    map[string]string `json:"headers,omitempty"`
-	Parameters map[string]string `json:"parameters,omitempty"`
-	Health     string            `json:"health,omitempty"`
+	Health  string            `json:"health,omitempty"`
+	URL     string            `json:"url,omitempty"`
+	Timeout int               `json:"timeout,omitempty"`
+	Headers map[string]string `json:"headers,omitempty"`
 }
 
 // Unmarshal configurables

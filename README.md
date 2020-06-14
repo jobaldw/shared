@@ -67,11 +67,10 @@ type Dependents struct {
 }
 
 type Client struct {
+    Health     string            `json:"health,omitempty"`
     URL        string            `json:"url,omitempty"`
     Timeout    int               `json:"timeout,omitempty"`
     Headers    map[string]string `json:"headers,omitempty"`
-    Parameters map[string]string `json:"parameters,omitempty"`
-    Health     string            `json:"health,omitempty"`
 }
 ```
 
@@ -127,9 +126,8 @@ Makes http client calls simpler while still allowing for customization for any C
 
 ``` go
 type Client struct {
-    Parameters map[string]string
-    Headers    map[string]string
     Health     string
+    Headers    map[string]string
 
     URL    *url.URL
     Client *http.Client
@@ -166,7 +164,7 @@ func main() {
     ...
     clients := make(map[string]client.Client)
     for key, value := range conf.Dependents {
-        newClient, err := client.New(value.URL, value.Health, value.Timeout, value.Headers, value.Parameters)
+        newClient, err := client.New(value.URL, value.Health, value.Timeout, value.Headers)
         if err != nil {
             return Controller{}, err
         }
@@ -187,23 +185,10 @@ These http request all return a response.Response or an error.
 func main() {
     ...
 
-    clients["key"].Get("path") /* or */ client.Get("path")
-    clients["key"].Put("path", body) /* or */ client.Put("path", body)
-    clients["key"].Post("path", body) /* or */ client.Post("path", body)
-    clients["key"].Delete("path") /* or */ client.Delete("path")
-}
-```
-
-#### adding parameters
-
-When adding parameters to a http request, the `client.AddParams()` function allows fir the option to remove current parameters.
-
-``` go
-func foo() {
-    // to remove current, add new parameter
-    clients["key"].AddParams(true, map[string]string{"param1": "value"})
-    //or
-    client.AddParams(true, map[string]string{"param1": "value"})
+    clients["key"].Get("path", params) /* or */ client.Get("path", params)
+    clients["key"].Put("path", params, body) /* or */ client.Put("path", params, body)
+    clients["key"].Post("path", params, body) /* or */ client.Post("path", params, body)
+    clients["key"].Delete("path", params) /* or */ client.Delete("path", params)
 }
 ```
 
