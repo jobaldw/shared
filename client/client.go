@@ -62,13 +62,13 @@ func (c *Client) do(method, path string, parameters map[string]string, body io.R
 
 	req, err := http.NewRequest(method, c.URL.String()+"/"+path, body)
 	if err != nil {
-		return resp, fmt.Errorf("problem occured building %s request: %s, %s", method, c.URL.String(), err)
+		return resp, fmt.Errorf("problem occurred building %s request: %s, %s", method, c.URL.String(), err)
 	}
 
 	req = prepRequest(req, c.Headers, parameters)
 	r, err := c.Client.Do(req)
 	if err != nil {
-		return resp, fmt.Errorf("problem occured with request: %s", err)
+		return resp, fmt.Errorf("problem occurred with request: %s", err)
 	}
 
 	resp.Save(r)
