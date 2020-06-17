@@ -2,6 +2,7 @@ package mgo
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"net/url"
 	"time"
@@ -26,11 +27,24 @@ type Mongo struct {
 }
 
 //Init mongo instance
-func Init(uri *url.URL, database string, collections map[string]string) Mongo {
+func Init(rel *url.URL, database string, collections map[string]string) Mongo {
 	return Mongo{
-		URI:         uri,
+		URI:         rel,
 		Name:        database,
 		Collections: collections,
+	}
+}
+
+// Parse url
+func Parse(uri string) (rel string, err error) {
+	rawURI, err := base64.RawStdEncoding.DecodeString(uri)
+	if err != nil {
+		return
+	}
+
+	rel, err = url.Parse(string(rawURI))
+	if err != nil {
+		return
 	}
 }
 
