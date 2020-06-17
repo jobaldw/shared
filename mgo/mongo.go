@@ -36,7 +36,7 @@ func Init(rel *url.URL, database string, collections map[string]string) Mongo {
 }
 
 // Parse url
-func Parse(uri string) (rel string, err error) {
+func Parse(uri string) (rel *url.URL, err error) {
 	rawURI, err := base64.RawStdEncoding.DecodeString(uri)
 	if err != nil {
 		return
