@@ -46,6 +46,7 @@ func Parse(uri string) (rel *url.URL, err error) {
 	if err != nil {
 		return
 	}
+	return
 }
 
 //Connect to mongo
