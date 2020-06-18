@@ -86,34 +86,34 @@ func (m *Mongo) Ping() (err error) {
 }
 
 //Insert record in mongo
-func (m *Mongo) Insert(doc interface{}, title, key string) (*mongo.InsertOneResult, error) {
-	collection := m.Database.Collection(m.Collections[key])
+func (m *Mongo) Insert(doc interface{}, collection string) (*mongo.InsertOneResult, error) {
+	collection := m.Database.Collection(m.Collections[collection])
 	return collection.InsertOne(context.Background(), doc, options.InsertOne())
 }
 
 //FindOne record in mongo
-func (m *Mongo) FindOne(id primitive.ObjectID, key string) *mongo.SingleResult {
+func (m *Mongo) FindOne(id primitive.ObjectID, collection string) *mongo.SingleResult {
 	filter := bson.M{"_id": id}
-	collection := m.Database.Collection(m.Collections[key])
+	collection := m.Database.Collection(m.Collections[collection])
 	return collection.FindOne(context.Background(), filter, options.FindOne())
 }
 
 //FindMany record in mongo
-func (m *Mongo) FindMany(filter []bson.M, key string) (*mongo.Cursor, error) {
-	collection := m.Database.Collection(m.Collections[key])
+func (m *Mongo) FindMany(filter []bson.M, collection string) (*mongo.Cursor, error) {
+	collection := m.Database.Collection(m.Collections[collection])
 	return collection.Aggregate(context.Background(), filter)
 }
 
 //Update record in mongo
-func (m *Mongo) Update(id primitive.ObjectID, doc interface{}, key string) (*mongo.UpdateResult, error) {
+func (m *Mongo) Update(id primitive.ObjectID, doc interface{}, collection string) (*mongo.UpdateResult, error) {
 	filter := bson.M{"_id": id}
-	collection := m.Database.Collection(m.Collections[key])
+	collection := m.Database.Collection(m.Collections[collection])
 	return collection.UpdateOne(context.Background(), filter, bson.M{"$set": doc})
 }
 
 //Delete record in mongo
-func (m *Mongo) Delete(id primitive.ObjectID, key string) (*mongo.DeleteResult, error) {
+func (m *Mongo) Delete(id primitive.ObjectID, collection string) (*mongo.DeleteResult, error) {
 	filter := bson.M{"_id": id}
-	collection := m.Database.Collection(m.Collections[key])
+	collection := m.Database.Collection(m.Collections[collection])
 	return collection.DeleteOne(context.Background(), filter, options.Delete())
 }
