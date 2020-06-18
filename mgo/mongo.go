@@ -86,34 +86,34 @@ func (m *Mongo) Ping() (err error) {
 }
 
 //Insert record in mongo
-func (m *Mongo) Insert(doc interface{}, collection string) (*mongo.InsertOneResult, error) {
-	collection := m.Database.Collection(m.Collections[collection])
+func (m *Mongo) Insert(doc interface{}, collectionKey string) (*mongo.InsertOneResult, error) {
+	collection := m.Database.Collection(m.Collections[collectionKey])
 	return collection.InsertOne(context.Background(), doc, options.InsertOne())
 }
 
 //FindOne record in mongo
-func (m *Mongo) FindOne(id primitive.ObjectID, collection string) *mongo.SingleResult {
+func (m *Mongo) FindOne(id primitive.ObjectID, collectionKey string) *mongo.SingleResult {
 	filter := bson.M{"_id": id}
-	collection := m.Database.Collection(m.Collections[collection])
+	collection := m.Database.Collection(m.Collections[collectionKey])
 	return collection.FindOne(context.Background(), filter, options.FindOne())
 }
 
 //FindMany record in mongo
-func (m *Mongo) FindMany(filter []bson.M, collection string) (*mongo.Cursor, error) {
-	collection := m.Database.Collection(m.Collections[collection])
+func (m *Mongo) FindMany(filter []bson.M, collectionKey string) (*mongo.Cursor, error) {
+	collection := m.Database.Collection(m.Collections[collectionKey])
 	return collection.Aggregate(context.Background(), filter)
 }
 
 //Update record in mongo
-func (m *Mongo) Update(id primitive.ObjectID, doc interface{}, collection string) (*mongo.UpdateResult, error) {
+func (m *Mongo) Update(id primitive.ObjectID, doc interface{}, collectionKey string) (*mongo.UpdateResult, error) {
 	filter := bson.M{"_id": id}
-	collection := m.Database.Collection(m.Collections[collection])
+	collection := m.Database.Collection(m.Collections[collectionKey])
 	return collection.UpdateOne(context.Background(), filter, bson.M{"$set": doc})
 }
 
 //Delete record in mongo
-func (m *Mongo) Delete(id primitive.ObjectID, collection string) (*mongo.DeleteResult, error) {
+func (m *Mongo) Delete(id primitive.ObjectID, collectionKey string) (*mongo.DeleteResult, error) {
 	filter := bson.M{"_id": id}
-	collection := m.Database.Collection(m.Collections[collection])
+	collection := m.Database.Collection(m.Collections[collectionKey])
 	return collection.DeleteOne(context.Background(), filter, options.Delete())
 }
