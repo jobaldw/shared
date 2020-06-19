@@ -15,6 +15,9 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+// ErrNoDocuments error
+var ErrNoDocuments = mongo.ErrNoDocuments
+
 //Mongo configurations for mongo
 type Mongo struct {
 	Host string
