@@ -1,6 +1,5 @@
 # shared [![Go Report Card](https://goreportcard.com/badge/github.com/jobaldw/shared)](https://goreportcard.com/report/github.com/jobaldw/shared) [![Last Commit](https://img.shields.io/github/last-commit/jobaldw/shared)](https://img.shields.io/github/last-commit/jobaldw/shared) [![Release Version](https://img.shields.io/github/v/release/jobaldw/shared)](https://img.shields.io/github/v/release/jobaldw/shared)
 
-
 > A library of code that can be used in Go applications.
 
 ![JB Desgins](https://github.com/jobaldw/shared/blob/master/jb-icon.jpg)
