@@ -14,8 +14,16 @@ import (
 	"gopkg.in/square/go-jose.v2"
 )
 
+var domain, identifier string
+
+// Config values
+func Config(authentication config.Auth0) {
+	domain = authentication.Domain
+	identifier = authentication.Identifier
+}
+
 // Auth0 authentication
-func Auth0(authentication config.Auth0, next http.HandlerFunc) http.HandlerFunc {
+func Auth0(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 
@@ -23,9 +31,9 @@ func Auth0(authentication config.Auth0, next http.HandlerFunc) http.HandlerFunc 
 		w.Header().Set("Access-Control-Allow-Methods", "DELETE, GET, POST, PUT")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
 
-		domain := "https://" + authentication.Domain + "/"
+		domain := "https://" + domain + "/"
 		client := auth0.NewJWKClient(auth0.JWKClientOptions{URI: domain + ".well-known/jwks.json"}, nil)
-		configuration := auth0.NewConfiguration(client, []string{authentication.Identifier}, domain, jose.RS256)
+		configuration := auth0.NewConfiguration(client, []string{identifier}, domain, jose.RS256)
 		validator := auth0.NewValidator(configuration, nil)
 
 		_, err := validator.ValidateRequest(r)
