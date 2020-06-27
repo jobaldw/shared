@@ -22,8 +22,9 @@ Reads in **json** key value pairs that are unmarshaled into one configuration st
 
 ``` go
 type Config struct {
-    App App
-    Datasource Datasource
+    Application Application
+    Datasource  Datasource
+    Dependents  Dependents
 }
 ```
 
@@ -37,12 +38,21 @@ This package relies on a directory that should be at the root of the application
 *App - configurables for common application related objects.*
 
 ``` go
-type App struct {
+type Application struct {
     Name     string `json:"application,omitempty"`
     Port     int    `json:"port,omitempty"`
     LogLevel string `json:"log_level,omitempty"`
+    Auth0    Auth0  `json:"auth0,omitempty"`
 ```
 
+*Auth0 - configurables for Auth0 middleware authentication.*
+
+``` go
+type Auth0 struct {
+    Identifier string `json:"identifier,omitempty"`
+    Domain     string `json:"domain,omitempty"`
+}
+```
 *Datasource - configurations for one or more mongo database objects.*
 
 ``` go
