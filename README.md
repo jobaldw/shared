@@ -31,7 +31,7 @@ type Config struct {
 This package relies on a directory that should be at the root of the application called `config`. The **Unmarshal()** function looks for two json files named `application.json` and `datasource.json`.
 
 - config
-  - application.json // *gets read into the App struct*
+  - application.json // *gets read into the Application struct*
   - datasource.json  // *gets read into the Datasource struct*
   - dependents.json  // *gets read into the Dependents struct*
 
@@ -244,6 +244,14 @@ You can add as many endpoints as you want. Each instantiation needs a function t
 func main() {
     ...
     newRouter.HandleFunc("/endpoint", foo()).Methods(http.MethodGet)
+
+    ...
+
+    // starts the server and keeps it open
+    http.ListenAndServe(
+            8000,
+			r,
+		)
 }
 
 func foo() http.HandlerFunc {
@@ -294,10 +302,12 @@ func main() {
     // pass in configurables
     middleware.New(conf.Application.Auth0)
 
-    r := router.New(...)
-    
+    ...
+
     // wrap function with middleware.Auth0() wrapper
-	r.HandleFunc("/healh", middleware.Auth0(Foo())).Methods(http.MethodGet)
+	newRouter.HandleFunc("/endpoint", middleware.Auth0(foo())).Methods(http.MethodGet)
+
+    ...
 
     http.ListenAndServe(
             8000,
