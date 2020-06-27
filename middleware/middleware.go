@@ -3,8 +3,8 @@ package middleware
 import (
 	"fmt"
 	"net/http"
+	"os"
 
-	"github.com/jobaldw/shared/config"
 	"github.com/jobaldw/shared/log"
 	"github.com/jobaldw/shared/router"
 
@@ -17,9 +17,9 @@ import (
 var domain, identifier string
 
 // New values
-func New(authentication config.Auth0) {
-	domain = authentication.Domain
-	identifier = authentication.Identifier
+func New(id string) {
+	domain = os.Getenv("DOMAIN")
+	identifier = "https://" + id
 }
 
 // Auth0 authentication
