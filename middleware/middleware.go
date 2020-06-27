@@ -16,8 +16,8 @@ import (
 
 var domain, identifier string
 
-// Config values
-func Config(authentication config.Auth0) {
+// New values
+func New(authentication config.Auth0) {
 	domain = authentication.Domain
 	identifier = authentication.Identifier
 }

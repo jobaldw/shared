@@ -265,3 +265,35 @@ The status of this response is `200 OK`
     "msg": "hello world"
 }
 ```
+
+## middlware
+
+Utilizes the [auth0](https://auth0.com/ "auth0") middlware capability to validate user access to API endpoints using Bearer token authentication.
+
+**Note**: This package is dependent on the **config** package.
+
+### middleware Set Up
+
+``` go
+package main
+
+import "github.com/jobaldw/shared/config"
+import "github.com/jobaldw/shared/middleware"
+
+func main() {
+    ... 
+    
+    // pass in configurables
+    middleware.New(conf.Application.Auth0)
+
+    r := router.New(...)
+    
+    // wrap function with middleware.Auth0() wrapper
+	r.HandleFunc("/healh", middleware.Auth0(Foo())).Methods(http.MethodGet)
+
+    http.ListenAndServe(
+            8000,
+			middleware.Handler(r), // wrap the router with the middle handler options
+		)
+}
+```
