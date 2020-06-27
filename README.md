@@ -35,7 +35,7 @@ This package relies on a directory that should be at the root of the application
   - datasource.json  // *gets read into the Datasource struct*
   - dependents.json  // *gets read into the Dependents struct*
 
-*App - configurables for common application related objects.*
+*Application - configurables for common application related objects.*
 
 ``` go
 type Application struct {
@@ -305,7 +305,7 @@ func main() {
     ...
 
     // wrap function with middleware.Auth0() wrapper
-	newRouter.HandleFunc("/endpoint", middleware.Auth0(foo())).Methods(http.MethodGet)
+    newRouter.HandleFunc("/endpoint", middleware.Auth0(foo())).Methods(http.MethodGet)
 
     ...
 
