@@ -249,9 +249,9 @@ func main() {
 
     // starts the server and keeps it open
     http.ListenAndServe(
-            8000,
-			r,
-		)
+        8000,
+        r,
+    )
 }
 
 func foo() http.HandlerFunc {
@@ -310,9 +310,9 @@ func main() {
     ...
 
     http.ListenAndServe(
-            8000,
-			middleware.Handler(r), // wrap the router with the middle handler options
-		)
+        8000,
+        middleware.Handler(r), // wrap the router with the middle handler options
+    )
 }
 ```
 
