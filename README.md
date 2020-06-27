@@ -280,8 +280,6 @@ The status of this response is `200 OK`
 
 Utilizes the [auth0](https://auth0.com/ "auth0") middlware capability to validate user access to API endpoints using Bearer token authentication.
 
-**Note**: This package is dependent on the **config** package.
-
 ### middleware Set Up
 
 ``` go
@@ -307,3 +305,50 @@ func main() {
 		)
 }
 ```
+
+## mgo
+
+Utilizes the [offical mongo driver](https://godoc.org/go.mongodb.org/mongo-driver/mongo "mongo-driver") to make mongo request simpler.
+
+*Mongo - client configurations.*
+
+``` go
+type Mongo struct {
+    Host string
+    Name string
+    User string
+
+    URI         *url.URL
+    Database    *mongo.Database
+    Collections map[string]string
+}
+```
+
+### mgo Set Up
+
+``` go
+import  "github.com/jobaldw/shared/mgo"
+
+func main() {
+    uri, err := mgo.Parse("bW9uZ28rc3ZyOi8vZmFrZVVSTFBhdGhUb01vbmdv")
+    if err != nil {
+        return
+    }
+
+    ds = mgo.Init(uri, "movieDB", map[string]string{"Act":"action", "Adv":"adventure", "Rom":"romance"})
+    if err := ds.Connect(); err != nil {
+        return ds, err
+    }
+
+    if err := ds.Ping(); err != nil {
+        return ds, err
+    }
+}
+```
+
+After successful connection you will have access to do the following mongo request:
+* Insert()
+* FindOne()
+* FindMany()
+* Update()
+* Delete()
