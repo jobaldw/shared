@@ -36,7 +36,7 @@ func Auth0(next http.HandlerFunc) http.HandlerFunc {
 		w.Header().Set("Access-Control-Allow-Methods", "DELETE, GET, POST, PUT")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
 
-		client := auth0.NewJWKClient(auth0.JWKClientOptions{URI: domain + ".well-known/jwks.json"}, nil)
+		client := auth0.NewJWKClient(auth0.JWKClientOptions{URI: domain + "/.well-known/jwks.json"}, nil)
 		configuration := auth0.NewConfiguration(client, []string{identifier}, domain, jose.RS256)
 		validator := auth0.NewValidator(configuration, nil)
 
@@ -99,8 +99,7 @@ func getToken() (string, error) {
 		return "", fmt.Errorf("could not call %s, %s", domain, err)
 	}
 
-	fmt.Println(resp.Request)
-	fmt.Println(resp)
+	fmt.Println(resp.Body)
 
 	if err := json.Unmarshal(resp.Body.Bytes, &payload); err != nil {
 		return "", fmt.Errorf("could not unmarshal response, %s", err)
