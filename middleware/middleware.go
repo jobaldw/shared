@@ -20,10 +20,10 @@ import (
 var domain, identifier, clientID, clientSecret string
 
 // New values
-func New(id, cID, secret string) {
+func New(id, cid, secret string) {
 	domain = "https://" + os.Getenv("A0_DOMAIN")
 	identifier = "https://" + id
-	clientID = os.Getenv(cID)
+	clientID = os.Getenv(cid)
 	clientSecret = os.Getenv(secret)
 }
 
