@@ -17,12 +17,14 @@ import (
 	"gopkg.in/square/go-jose.v2"
 )
 
-var domain, identifier string
+var domain, identifier, clientID, clientSecret string
 
 // New values
-func New(id string) {
-	domain = "https://" + os.Getenv("DOMAIN")
+func New(id, cID, secret string) {
+	domain = "https://" + os.Getenv("A0_DOMAIN")
 	identifier = "https://" + id
+	clientID = os.Getenv(cID)
+	secret = os.Getenv(secret)
 }
 
 // Auth0 authentication
@@ -48,11 +50,7 @@ func Auth0(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		fmt.Println("Bearer " + token)
-
 		r.Header.Add("Authorization", "Bearer "+token)
-
-		fmt.Println(r)
 		_, err = validator.ValidateRequest(r)
 		if err != nil {
 			resp.ERR = fmt.Sprintf("unauthorized, %s", err)
@@ -84,8 +82,8 @@ func getToken() (string, error) {
 
 		AccessToken string `json:"access_token,omitempty"`
 	}{
-		ClientID:     "7V1Ql8WrvTCdIOcXKA8KzViotXXTK1ka",
-		ClientSecret: "ZR1MQLAMD3PuIyP4nOptkS3jGo0-UmRRK_yK9NIOJlzlLSmOedyclhRKBVn3_0r5",
+		ClientID:     clientID,
+		ClientSecret: clientSecret,
 		Audience:     identifier,
 		GrantType:    "client_credentials",
 	}
