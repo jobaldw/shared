@@ -105,5 +105,6 @@ func getToken() (string, error) {
 		return "", fmt.Errorf("could not unmarshal response, %s", err)
 	}
 
+	fmt.Println(resp)
 	return payload.AccessToken, err
 }
