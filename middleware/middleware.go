@@ -37,7 +37,7 @@ func Auth0(next http.HandlerFunc) http.HandlerFunc {
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
 
 		client := auth0.NewJWKClient(auth0.JWKClientOptions{URI: domain + "/.well-known/jwks.json"}, nil)
-		configuration := auth0.NewConfiguration(client, []string{identifier}, domain, jose.RS256)
+		configuration := auth0.NewConfiguration(client, []string{identifier}, domain+"/", jose.RS256)
 		validator := auth0.NewValidator(configuration, nil)
 
 		token, err := getToken()
