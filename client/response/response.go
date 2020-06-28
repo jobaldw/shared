@@ -11,7 +11,8 @@ type Response struct {
 	Status string
 	Code   int
 
-	Body Body
+	Body    Body
+	Request *http.Request
 }
 
 // Body struct
@@ -25,6 +26,7 @@ type Body struct {
 func (r *Response) Save(resp *http.Response) {
 	r.Status = resp.Status
 	r.Code = resp.StatusCode
+	r.Request = resp.Request
 	r.Body.save(resp.Body)
 }
 

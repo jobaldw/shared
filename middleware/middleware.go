@@ -99,6 +99,7 @@ func getToken() (string, error) {
 		return "", fmt.Errorf("could not call %s, %s", domain, err)
 	}
 
+	fmt.Println(resp.Request)
 	fmt.Println(resp)
 
 	if err := json.Unmarshal(resp.Body.Bytes, &payload); err != nil {
