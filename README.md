@@ -290,6 +290,8 @@ Utilizes the [auth0](https://auth0.com/ "auth0") middlware capability to validat
 
 ### middleware Set Up
 
+**Note:** You will need to set an environment variable named `A0_DOMAIN` to your personal Auth0 domain and two additional environment variables for your *client_id* and *client_secret*.
+
 ``` go
 package main
 
@@ -299,8 +301,8 @@ import "github.com/jobaldw/shared/middleware"
 func main() {
     ... 
     
-    // pass in configurables
-    middleware.New(conf.Application.Auth0)
+    // pass in configurables.
+    middleware.New(conf.Application.Auth0.Domain, ENV_CLIENT_ID, ENV_CLIENT_SECRET)
 
     ...
 
