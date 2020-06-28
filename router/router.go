@@ -29,11 +29,15 @@ type Resp struct {
 }
 
 // New mux router
-func New(app string, clients map[string]client.Client) *mux.Router {
+func New(app string, client client.Client, clients map[string]client.Client) *mux.Router {
 	appName = app
 
 	r := mux.NewRouter()
 	r.HandleFunc("/health", health()).Methods(http.MethodGet)
+	if clients == nil {
+		clients["client"] = client
+	}
+
 	r.HandleFunc("/ready", ready(clients)).Methods(http.MethodGet)
 
 	return r
