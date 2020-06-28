@@ -87,21 +87,22 @@ func getToken() (string, error) {
 	}
 
 	reqBodyBytes := new(bytes.Buffer)
-	if err := json.NewEncoder(reqBodyBytes).Encode(payload); err != nil {
-		return "", err
-	}
+	json.NewEncoder(reqBodyBytes).Encode(payload)
+
 	auth0, err := client.New(domain, "", 10, map[string]string{"content-type": "application/json"})
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("could not create client, %s", err)
 	}
 
 	resp, err := auth0.Post("oauth/token", nil, bytes.NewBuffer(reqBodyBytes.Bytes()))
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("could not call %s, %s", domain, err)
 	}
 
+	fmt.Println(resp)
+
 	if err := json.Unmarshal(resp.Body.Bytes, &payload); err != nil {
-		return "", err
+		return "", fmt.Errorf("could not unmarshal response, %s", err)
 	}
 
 	return payload.AccessToken, err
