@@ -54,7 +54,7 @@ func Auth0(next http.HandlerFunc) http.HandlerFunc {
 		_, err = validator.ValidateRequest(r)
 		if err != nil {
 			resp.ERR = fmt.Sprintf("unauthorized, %s", err)
-			log.Details().Errorf(resp.ERR)
+			log.Add(log.Fields{"token": token}).Errorf(resp.ERR)
 			router.Response(w, http.StatusUnauthorized, resp)
 			return
 		}
