@@ -21,7 +21,7 @@ var domain, identifier string
 
 // New values
 func New(id string) {
-	domain = "https://" + os.Getenv("DOMAIN") + "/"
+	domain = "https://" + os.Getenv("DOMAIN")
 	identifier = "https://" + id
 }
 
