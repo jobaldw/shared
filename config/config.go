@@ -27,6 +27,13 @@ type Application struct {
 	Name     string `json:"application,omitempty"`
 	Port     int    `json:"port,omitempty"`
 	LogLevel string `json:"log_level,omitempty"`
+	Auth0    Auth0  `json:"auth0,omitempty"`
+}
+
+// Auth0 struct
+type Auth0 struct {
+	Identifier string `json:"identifier,omitempty"`
+	Domain     string `json:"domain,omitempty"`
 }
 
 // Datasource struct

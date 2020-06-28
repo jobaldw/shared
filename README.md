@@ -22,27 +22,37 @@ Reads in **json** key value pairs that are unmarshaled into one configuration st
 
 ``` go
 type Config struct {
-    App App
-    Datasource Datasource
+    Application Application
+    Datasource  Datasource
+    Dependents  Dependents
 }
 ```
 
 This package relies on a directory that should be at the root of the application called `config`. The **Unmarshal()** function looks for two json files named `application.json` and `datasource.json`.
 
 - config
-  - application.json // *gets read into the App struct*
+  - application.json // *gets read into the Application struct*
   - datasource.json  // *gets read into the Datasource struct*
   - dependents.json  // *gets read into the Dependents struct*
 
-*App - configurables for common application related objects.*
+*Application - configurables for common application related objects.*
 
 ``` go
-type App struct {
+type Application struct {
     Name     string `json:"application,omitempty"`
     Port     int    `json:"port,omitempty"`
     LogLevel string `json:"log_level,omitempty"`
+    Auth0    Auth0  `json:"auth0,omitempty"`
 ```
 
+*Auth0 - configurables for Auth0 middleware authentication.*
+
+``` go
+type Auth0 struct {
+    Identifier string `json:"identifier,omitempty"`
+    Domain     string `json:"domain,omitempty"`
+}
+```
 *Datasource - configurations for one or more mongo database objects.*
 
 ``` go
@@ -234,6 +244,14 @@ You can add as many endpoints as you want. Each instantiation needs a function t
 func main() {
     ...
     newRouter.HandleFunc("/endpoint", foo()).Methods(http.MethodGet)
+
+    ...
+
+    // starts the server and keeps it open
+    http.ListenAndServe(
+        8000,
+        r,
+    )
 }
 
 func foo() http.HandlerFunc {
@@ -265,3 +283,84 @@ The status of this response is `200 OK`
     "msg": "hello world"
 }
 ```
+
+## middlware
+
+Utilizes the [auth0](https://auth0.com/ "auth0") middlware capability to validate user access to API endpoints using Bearer token authentication.
+
+### middleware Set Up
+
+**Note:** You will need to set an environment variable named `A0_DOMAIN` to your personal Auth0 domain and two additional environment variables for your *client_id* and *client_secret*.
+
+``` go
+package main
+
+import "github.com/jobaldw/shared/config"
+import "github.com/jobaldw/shared/middleware"
+
+func main() {
+    ... 
+    
+    // pass in configurables.
+    middleware.New(conf.Application.Auth0.Domain, ENV_CLIENT_ID, ENV_CLIENT_SECRET)
+
+    ...
+
+    // wrap function with middleware.Auth0() wrapper
+    newRouter.HandleFunc("/endpoint", middleware.Auth0(foo())).Methods(http.MethodGet)
+
+    ...
+
+    http.ListenAndServe(
+        8000,
+        middleware.Handler(r), // wrap the router with the middle handler options
+    )
+}
+```
+
+## mgo
+
+Utilizes the [offical mongo driver](https://godoc.org/go.mongodb.org/mongo-driver/mongo "mongo-driver") to make mongo request simpler.
+
+*Mongo - client configurations.*
+
+``` go
+type Mongo struct {
+    Host string
+    Name string
+    User string
+
+    URI         *url.URL
+    Database    *mongo.Database
+    Collections map[string]string
+}
+```
+
+### mgo Set Up
+
+``` go
+import  "github.com/jobaldw/shared/mgo"
+
+func main() {
+    uri, err := mgo.Parse("bW9uZ28rc3ZyOi8vZmFrZVVSTFBhdGhUb01vbmdv")
+    if err != nil {
+        return
+    }
+
+    ds = mgo.Init(uri, "movieDB", map[string]string{"Act":"action", "Adv":"adventure", "Rom":"romance"})
+    if err := ds.Connect(); err != nil {
+        return ds, err
+    }
+
+    if err := ds.Ping(); err != nil {
+        return ds, err
+    }
+}
+```
+
+After successful connection you will have access to do the following mongo request:
+* Insert()
+* FindOne()
+* FindMany()
+* Update()
+* Delete()
