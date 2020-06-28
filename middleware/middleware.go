@@ -24,7 +24,7 @@ func New(id, cID, secret string) {
 	domain = "https://" + os.Getenv("A0_DOMAIN")
 	identifier = "https://" + id
 	clientID = os.Getenv(cID)
-	secret = os.Getenv(secret)
+	clientSecret = os.Getenv(secret)
 }
 
 // Auth0 authentication
@@ -87,7 +87,7 @@ func getToken() (string, error) {
 		Audience:     identifier,
 		GrantType:    "client_credentials",
 	}
-	fmt.Println(payload)
+
 	reqBodyBytes := new(bytes.Buffer)
 	json.NewEncoder(reqBodyBytes).Encode(payload)
 
@@ -105,6 +105,5 @@ func getToken() (string, error) {
 		return "", fmt.Errorf("could not unmarshal response, %s", err)
 	}
 
-	fmt.Println(resp)
 	return payload.AccessToken, err
 }
