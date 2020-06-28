@@ -87,7 +87,7 @@ func getToken() (string, error) {
 		Audience:     identifier,
 		GrantType:    "client_credentials",
 	}
-
+	fmt.Println(payload)
 	reqBodyBytes := new(bytes.Buffer)
 	json.NewEncoder(reqBodyBytes).Encode(payload)
 
