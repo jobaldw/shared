@@ -48,7 +48,11 @@ func Auth0(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
+		fmt.Println("Bearer " + token)
+
 		r.Header.Add("Authorization", "Bearer "+token)
+
+		fmt.Println(r)
 		_, err = validator.ValidateRequest(r)
 		if err != nil {
 			resp.ERR = fmt.Sprintf("unauthorized, %s", err)
@@ -98,8 +102,6 @@ func getToken() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("could not call %s, %s", domain, err)
 	}
-
-	fmt.Println(resp.Body)
 
 	if err := json.Unmarshal(resp.Body.Bytes, &payload); err != nil {
 		return "", fmt.Errorf("could not unmarshal response, %s", err)
