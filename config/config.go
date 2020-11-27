@@ -10,9 +10,9 @@ import (
 )
 
 const (
-	appSource  = "config/application.json"
-	dataSource = "config/datasource.json"
-	depSource  = "config/dependents.json"
+	appSource  = "application.json"
+	dataSource = "datasource.json"
+	depSource  = "dependents.json"
 )
 
 // Config struct
@@ -64,24 +64,21 @@ type Client struct {
 }
 
 // Unmarshal configurables
-func Unmarshal() (conf Config, err error) {
-	if hasSource(appSource) {
-		err = read(appSource, &conf.Application)
-		if err != nil {
+func Unmarshal(dir string) (conf Config, err error) {
+	if hasSource(dir + appSource) {
+		if err = read(dir+appSource, &conf.Application); err != nil {
 			return conf, fmt.Errorf("%s, %s '%s'", err, "could not read", appSource)
 		}
 	}
 
-	if hasSource(dataSource) {
-		err = read(dataSource, &conf.Datasource)
-		if err != nil {
+	if hasSource(dir + dataSource) {
+		if err = read(dir+dataSource, &conf.Datasource); err != nil {
 			return conf, fmt.Errorf("%s, %s '%s'", err, "could not read", dataSource)
 		}
 	}
 
-	if hasSource(depSource) {
-		err = read(depSource, &conf.Dependents)
-		if err != nil {
+	if hasSource(dir + depSource) {
+		if err = read(dir+depSource, &conf.Dependents); err != nil {
 			return conf, fmt.Errorf("%s, %s '%s'", err, "could not read", depSource)
 		}
 	}
