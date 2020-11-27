@@ -10,33 +10,17 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// const status' and app name
-var (
-	appName string
-
-	statusDown = "down"
-	statusUp   = "up"
-)
-
-// Resp struct
-type Resp struct {
-	ID      interface{} `json:"id,omitempty"`
-	Payload interface{} `json:"payload,omitempty"`
-
-	Status string `json:"status,omitempty"`
-	MSG    string `json:"msg,omitempty"`
-	ERR    string `json:"error,omitempty"`
-}
+var appName string
 
 // New mux router
-func New(app string, aClient client.Client, clients map[string]client.Client) *mux.Router {
+func New(app string, oneClient client.Client, clients map[string]client.Client) *mux.Router {
 	appName = app
 
 	r := mux.NewRouter()
 	r.HandleFunc("/health", health()).Methods(http.MethodGet)
 	if clients == nil {
 		clients := make(map[string]client.Client)
-		clients["client"] = aClient
+		clients["client"] = oneClient
 	}
 
 	r.HandleFunc("/ready", ready(clients)).Methods(http.MethodGet)
@@ -44,8 +28,8 @@ func New(app string, aClient client.Client, clients map[string]client.Client) *m
 	return r
 }
 
-// Response to client
-func Response(w http.ResponseWriter, code int, payload interface{}) error {
+// RespondWithJSON to client
+func RespondWithJSON(w http.ResponseWriter, code int, payload interface{}) error {
 	response, err := json.Marshal(payload)
 	if err != nil {
 		return fmt.Errorf("%s, %s", err, "could not marshal payload")
@@ -57,6 +41,18 @@ func Response(w http.ResponseWriter, code int, payload interface{}) error {
 	_, err = w.Write(response)
 	if err != nil {
 		return fmt.Errorf("%s, %s", err, "could not write response")
+	}
+
+	return err
+}
+
+// RespondWithError to client
+func RespondWithError(w http.ResponseWriter, code int, e error) error {
+	err := RespondWithJSON(w, code, struct {
+		Err error `json:"error"`
+	}{e})
+	if err != nil {
+		return err
 	}
 
 	return err
@@ -78,31 +74,31 @@ func Vars(r *http.Request) map[string]string {
 // Helper functions
 func health() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		resp := Resp{Status: statusUp, MSG: fmt.Sprintf("%s is healthy", appName)}
-		Response(w, http.StatusOK, resp)
+		RespondWithJSON(w, http.StatusOK, struct {
+			Status string `json:"status"`
+			MSG    string `json:"message"`
+		}{"up", fmt.Sprintf("%s is healthy", appName)})
 	}
 }
 
 func ready(clients map[string]client.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		resp := Resp{Status: statusDown, MSG: fmt.Sprintf("%s is not ready", appName)}
-
-		for clientKey, client := range clients {
-			res, err := client.Get(client.Health, nil)
+		for _, client := range clients {
+			resp, err := client.Get(client.Health, nil)
 			if err != nil {
-				resp.ERR = fmt.Sprintf("could not check health of %s, %s", clientKey, err)
-				Response(w, http.StatusNotFound, resp)
+				RespondWithError(w, http.StatusNotFound, err)
 				return
 			}
 
-			if !IsSuccessful(res.Code) {
-				Response(w, http.StatusServiceUnavailable, resp)
+			if !IsSuccessful(resp.Code) {
+				RespondWithError(w, http.StatusServiceUnavailable, fmt.Errorf("%d, %s", resp.Code, resp.Body.String))
 				return
 			}
 		}
 
-		resp.Status = statusUp
-		resp.MSG = fmt.Sprintf("%s is ready", appName)
-		Response(w, http.StatusOK, resp)
+		RespondWithJSON(w, http.StatusOK, struct {
+			Status string `json:"status"`
+			MSG    string `json:"message"`
+		}{"up", fmt.Sprintf("%s is ready", appName)})
 	}
 }

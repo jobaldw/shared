@@ -67,19 +67,19 @@ type Client struct {
 func Unmarshal(dir string) (conf Config, err error) {
 	if hasSource(dir + appSource) {
 		if err = read(dir+appSource, &conf.Application); err != nil {
-			return conf, fmt.Errorf("%s, %s '%s'", err, "could not read", appSource)
+			return conf, fmt.Errorf("%s %s'", appSource, err)
 		}
 	}
 
 	if hasSource(dir + dataSource) {
 		if err = read(dir+dataSource, &conf.Datasource); err != nil {
-			return conf, fmt.Errorf("%s, %s '%s'", err, "could not read", dataSource)
+			return conf, fmt.Errorf("%s %s'", dataSource, err)
 		}
 	}
 
 	if hasSource(dir + depSource) {
 		if err = read(dir+depSource, &conf.Dependents); err != nil {
-			return conf, fmt.Errorf("%s, %s '%s'", err, "could not read", depSource)
+			return conf, fmt.Errorf("%s %s'", depSource, err)
 		}
 	}
 
@@ -95,7 +95,7 @@ func hasSource(file string) bool {
 	return true
 }
 
-func read(filename string, configuration interface{}) (err error) {
+func read(filename string, configuration interface{}) error {
 	configValue := reflect.ValueOf(configuration)
 	if typ := configValue.Type(); typ.Kind() != reflect.Ptr || typ.Elem().Kind() != reflect.Struct {
 		return errors.New("configuration should be a pointer to a struct type")
@@ -104,23 +104,23 @@ func read(filename string, configuration interface{}) (err error) {
 	return getValues(filename, configuration)
 }
 
-func getValues(filename string, configuration interface{}) (err error) {
+func getValues(filename string, configuration interface{}) error {
 	file, err := os.Open(filename)
 	if err != nil {
-		return
+		return err
 	}
 
 	defer file.Close()
 
 	data, err := ioutil.ReadAll(file)
 	if err != nil {
-		return
+		return err
 	}
 
 	err = json.Unmarshal(data, &configuration)
 	if err != nil {
-		return
+		return err
 	}
 
-	return
+	return err
 }

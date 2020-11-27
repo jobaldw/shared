@@ -30,9 +30,14 @@ func New(id, cid, secret string) {
 // Auth0 authentication
 func Auth0(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		resp := router.Resp{}
-
-		defer r.Body.Close()
+		var err error
+		defer func(e error) {
+			if e != nil {
+				log.Details().Error(e)
+			}
+			log.Details().Info()
+			r.Body.Close()
+		}(err)
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "DELETE, GET, POST, PUT")
@@ -44,18 +49,14 @@ func Auth0(next http.HandlerFunc) http.HandlerFunc {
 
 		token, err := getToken()
 		if err != nil {
-			resp.ERR = err.Error()
-			log.Details().Errorf(resp.ERR)
-			router.Response(w, http.StatusGatewayTimeout, resp)
+			router.RespondWithError(w, http.StatusGatewayTimeout, err)
 			return
 		}
-
 		r.Header.Add("Authorization", "Bearer "+token)
+
 		_, err = validator.ValidateRequest(r)
 		if err != nil {
-			resp.ERR = fmt.Sprintf("unauthorized, %s", err)
-			log.Add(log.Fields{"token": token}).Errorf(resp.ERR)
-			router.Response(w, http.StatusUnauthorized, resp)
+			router.RespondWithError(w, http.StatusUnauthorized, err)
 			return
 		}
 
