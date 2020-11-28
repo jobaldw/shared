@@ -33,10 +33,8 @@ func Auth0(next http.HandlerFunc) http.HandlerFunc {
 		var err error
 		defer func(e error) {
 			if e != nil {
-				log.Details().Error(e)
+				log.File().WithError(e)
 			}
-			log.Details().Info()
-			r.Body.Close()
 		}(err)
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
