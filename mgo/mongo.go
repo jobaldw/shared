@@ -101,7 +101,7 @@ func FindOne(ctx context.Context, collection *mongo.Collection, id primitive.Obj
 
 //FindMany records in mongo
 func FindMany(ctx context.Context, collection *mongo.Collection, filter []bson.M) (*mongo.Cursor, error) {
-	return collection.Find(ctx, filter, options.Find())
+	return collection.Aggregate(ctx, filter, options.Aggregate())
 }
 
 //Update record in mongo
