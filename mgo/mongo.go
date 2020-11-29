@@ -24,17 +24,15 @@ type Mongo struct {
 	Name string
 	User string
 
-	URI         *url.URL
-	Database    *mongo.Database
-	Collections map[string]string
+	URI      *url.URL
+	Database *mongo.Database
 }
 
 //Init mongo instance
-func Init(rel *url.URL, database string, collections map[string]string) Mongo {
+func Init(rel *url.URL, database string) Mongo {
 	return Mongo{
-		URI:         rel,
-		Name:        database,
-		Collections: collections,
+		URI:  rel,
+		Name: database,
 	}
 }
 
@@ -89,34 +87,33 @@ func (m *Mongo) Ping() (err error) {
 }
 
 //Insert record in mongo
-func (m *Mongo) Insert(doc interface{}, collectionKey string) (*mongo.InsertOneResult, error) {
-	collection := m.Database.Collection(m.Collections[collectionKey])
-	return collection.InsertOne(context.Background(), doc, options.InsertOne())
+func Insert(ctx context.Context, collection *mongo.Collection, doc interface{}) (*mongo.InsertOneResult, error) {
+	return collection.InsertOne(ctx, doc, options.InsertOne())
 }
 
 //FindOne record in mongo
-func (m *Mongo) FindOne(id primitive.ObjectID, collectionKey string) *mongo.SingleResult {
+func FindOne(ctx context.Context, collection *mongo.Collection, id primitive.ObjectID) (*mongo.SingleResult, error) {
 	filter := bson.M{"_id": id}
-	collection := m.Database.Collection(m.Collections[collectionKey])
-	return collection.FindOne(context.Background(), filter, options.FindOne())
+
+	result := collection.FindOne(ctx, filter, options.FindOne())
+	return result, result.Err()
 }
 
-//FindMany record in mongo
-func (m *Mongo) FindMany(filter []bson.M, collectionKey string) (*mongo.Cursor, error) {
-	collection := m.Database.Collection(m.Collections[collectionKey])
-	return collection.Aggregate(context.Background(), filter)
+//FindMany records in mongo
+func FindMany(ctx context.Context, collection *mongo.Collection, filter []bson.M) (*mongo.Cursor, error) {
+	return collection.Find(ctx, filter, options.Find())
 }
 
 //Update record in mongo
-func (m *Mongo) Update(id primitive.ObjectID, doc interface{}, collectionKey string) (*mongo.UpdateResult, error) {
+func Update(ctx context.Context, collection *mongo.Collection, id primitive.ObjectID, doc interface{}) (*mongo.UpdateResult, error) {
 	filter := bson.M{"_id": id}
-	collection := m.Database.Collection(m.Collections[collectionKey])
-	return collection.UpdateOne(context.Background(), filter, bson.M{"$set": doc})
+
+	return collection.UpdateOne(context.Background(), filter, bson.M{"$set": doc}, options.Update().SetUpsert(true))
 }
 
 //Delete record in mongo
-func (m *Mongo) Delete(id primitive.ObjectID, collectionKey string) (*mongo.DeleteResult, error) {
+func Delete(ctx context.Context, collection *mongo.Collection, id primitive.ObjectID) (*mongo.DeleteResult, error) {
 	filter := bson.M{"_id": id}
-	collection := m.Database.Collection(m.Collections[collectionKey])
+
 	return collection.DeleteOne(context.Background(), filter, options.Delete())
 }
