@@ -48,14 +48,12 @@ func RespondWithJSON(w http.ResponseWriter, code int, payload interface{}) error
 
 // RespondWithError to client
 func RespondWithError(w http.ResponseWriter, code int, e error) error {
-	err := RespondWithJSON(w, code, struct {
-		Err error `json:"error"`
-	}{e})
-	if err != nil {
+	if err := RespondWithJSON(w, code, struct {
+		Err string `json:"error"`
+	}{e.Error()}); err != nil {
 		return err
 	}
-
-	return err
+	return nil
 }
 
 // IsSuccessful response code
