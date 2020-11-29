@@ -66,19 +66,19 @@ type Client struct {
 // Unmarshal configurables
 func Unmarshal(dir string) (conf Config, err error) {
 	if hasSource(dir + appSource) {
-		if err = read(dir+appSource, &conf.Application); err != nil {
+		if err = Read(dir+appSource, &conf.Application); err != nil {
 			return conf, fmt.Errorf("%s %s'", appSource, err)
 		}
 	}
 
 	if hasSource(dir + dataSource) {
-		if err = read(dir+dataSource, &conf.Datasource); err != nil {
+		if err = Read(dir+dataSource, &conf.Datasource); err != nil {
 			return conf, fmt.Errorf("%s %s'", dataSource, err)
 		}
 	}
 
 	if hasSource(dir + depSource) {
-		if err = read(dir+depSource, &conf.Dependents); err != nil {
+		if err = Read(dir+depSource, &conf.Dependents); err != nil {
 			return conf, fmt.Errorf("%s %s'", depSource, err)
 		}
 	}
@@ -95,7 +95,7 @@ func hasSource(file string) bool {
 	return true
 }
 
-func read(filename string, configuration interface{}) error {
+func Read(filename string, configuration interface{}) error {
 	configValue := reflect.ValueOf(configuration)
 	if typ := configValue.Type(); typ.Kind() != reflect.Ptr || typ.Elem().Kind() != reflect.Struct {
 		return errors.New("configuration should be a pointer to a struct type")
