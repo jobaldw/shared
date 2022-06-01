@@ -9,13 +9,18 @@ import (
 	"reflect"
 )
 
-const (
-	configDirectory = "configs"
-	root            = "."
-)
+// The root directory of any project
+const root = "."
 
 var (
-	ErrConfigsNotFound  = errors.New("could not locate config values within the project")
+	// The config directory name where files with JSON value configs will live.
+	configDirectory = "configs"
+
+	// This error will normally be thrown if the configDirectory does not exist.
+	ErrConfigsNotFound = errors.New("could not locate config values within the project")
+
+	// The struct must be a pointer for json.unmarshaling purposes. If the value
+	// is nil or not a pointer, json.Unmarshal returns an InvalidUnmarshalError.
 	ErrNonPointerStruct = errors.New("configuration should be a pointer to a struct type")
 )
 
@@ -85,7 +90,7 @@ type Mongo struct {
 }
 
 /** Unmarshal
- * Reads in located config files to parse into any given config struct
+ * Reads in located JSON config files to parse into any given config struct
  * @param config: A pointer to a struct where values will be read into */
 func Unmarshal(config interface{}) error {
 	// check if given configuration is a pointer to a struct
@@ -137,7 +142,11 @@ func unmarshal(path string, config interface{}) error {
 			return fmt.Errorf(`%v, could not read "%s"`, err, path)
 		}
 
-		// store json data into struct
+		// Store JSON data into struct. To unmarshal JSON into a pointer, this
+		// function first handles the case of the JSON being the JSON literal null.
+		// In that case, it sets the pointer to nil. Otherwise, it unmarshals the
+		// JSON into the value pointed at by the pointer. If the pointer is nil,
+		// jon.Unmarshal allocates a new value for it to point to.
 		return json.Unmarshal(data, config)
 	}
 	return err
