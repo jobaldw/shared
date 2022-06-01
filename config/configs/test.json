@@ -1,0 +1,6 @@
+{
+    "field1": "a value",
+    "name": "api",
+    "log_level": "info",
+    "port": 3000
+}
