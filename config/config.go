@@ -114,8 +114,11 @@ func Unmarshal(config interface{}) error {
 			}
 			for _, file := range configs {
 				path := fmt.Sprintf("./%s/%s", folder.Name(), file.Name())
-				return unmarshal(path, config)
+				if err := unmarshal(path, config); err != nil {
+					return err
+				}
 			}
+			return nil
 		}
 	}
 
