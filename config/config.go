@@ -152,5 +152,5 @@ func unmarshal(path string, config interface{}) error {
 		// jon.Unmarshal allocates a new value for it to point to.
 		return json.Unmarshal(data, config)
 	}
-	return err
+	return ErrConfigsNotFound
 }
