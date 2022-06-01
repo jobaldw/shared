@@ -1,8 +1,6 @@
 package config
 
 import (
-	"errors"
-	"io/fs"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -99,14 +97,7 @@ func Test_read(t *testing.T) {
 				path:   "bad path",
 				config: &newStruct,
 			},
-			resp: func() error {
-				e := fs.PathError{
-					Op:   "CreateFile",
-					Path: "bad path",
-					Err:  errors.New("The system cannot find the file specified."),
-				}
-				return &e
-			}(),
+			resp: ErrConfigsNotFound,
 		},
 	}
 	for _, test := range tests {
