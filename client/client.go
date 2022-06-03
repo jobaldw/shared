@@ -157,7 +157,7 @@ func (c *Client) do(ctx context.Context, method, path string, params url.Values,
 	uri := c.URL.ResolveReference(c.URL)
 	req, err := http.NewRequestWithContext(ctx, method, uri.String(), body)
 	if err != nil {
-		return nil, fmt.Errorf(`client: %s, could not build %s request "%s"`, err, method, req.RequestURI)
+		return nil, fmt.Errorf("client: %s, could not build request", err)
 	}
 	req.Header = c.Headers
 	req.URL.RawQuery = params.Encode()
@@ -165,7 +165,7 @@ func (c *Client) do(ctx context.Context, method, path string, params url.Values,
 	// do the request
 	resp, err := c.client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf(`client: %s, could not make %s request "%s"`, err, method, req.RequestURI)
+		return nil, fmt.Errorf("client: %s, could not make request", err)
 	}
 
 	return &Response{
