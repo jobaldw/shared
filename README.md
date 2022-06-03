@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="JB Designs logo" src="https://github.com/jobaldw/shared/blob/main/jb-icon.jpg" height="150"/>
+  <img alt="JB Designs logo" src="./assets/jb-icon.jpg" height="150"/>
   <h3 align="center">shared</h3>
   <p align="center">A simple library of code that can be used in Go applications.</p>
 </p>

@@ -1,7 +1,9 @@
 package client
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -42,7 +44,7 @@ func New(conf config.Client) (*Client, error) {
 		client: &http.Client{
 			Timeout: time.Duration(conf.Timeout) * time.Second,
 		},
-	}, err
+	}, nil
 }
 
 // IsReady
@@ -60,7 +62,7 @@ func (c *Client) IsReady() (bool, error) {
 // 	* @param path: client path that request will send to
 // 	* @param parameters: query parameters
 func (c *Client) Get(path string, params map[string][]string) (*Response, error) {
-	return c.do(context.Background(), http.MethodGet, path, params, nil)
+	return c.GetWithContext(context.Background(), path, params)
 }
 
 // GetWithContext
@@ -77,8 +79,8 @@ func (c *Client) GetWithContext(ctx context.Context, path string, params map[str
 // 	* @param path: client path that request will send to
 // 	* @param parameters: query parameters
 // 	* @param body: request body
-func (c *Client) Post(path string, params map[string][]string, body io.Reader) (*Response, error) {
-	return c.do(context.Background(), http.MethodPost, path, params, body)
+func (c *Client) Post(path string, params map[string][]string, body interface{}) (*Response, error) {
+	return c.PostWithContext(context.Background(), path, params, body)
 }
 
 // PostWithContext
@@ -87,7 +89,7 @@ func (c *Client) Post(path string, params map[string][]string, body io.Reader) (
 // 	* @param path: client path that request will send to
 // 	* @param parameters: query parameters
 // 	* @param body: request body
-func (c *Client) PostWithContext(ctx context.Context, path string, params map[string][]string, body io.Reader) (*Response, error) {
+func (c *Client) PostWithContext(ctx context.Context, path string, params map[string][]string, body interface{}) (*Response, error) {
 	return c.do(ctx, http.MethodPost, path, params, body)
 }
 
@@ -96,8 +98,8 @@ func (c *Client) PostWithContext(ctx context.Context, path string, params map[st
 // 	* @param path: client path that request will send to
 // 	* @param parameters: query parameters
 // 	* @param body: request body
-func (c *Client) Put(path string, params map[string][]string, body io.Reader) (*Response, error) {
-	return c.do(context.Background(), http.MethodPut, path, params, body)
+func (c *Client) Put(path string, params map[string][]string, body interface{}) (*Response, error) {
+	return c.PutWithContext(context.Background(), path, params, body)
 }
 
 // PutWithContext
@@ -106,7 +108,7 @@ func (c *Client) Put(path string, params map[string][]string, body io.Reader) (*
 // 	* @param path: client path that request will send to
 // 	* @param parameters: query parameters
 // 	* @param body: request body
-func (c *Client) PutWithContext(ctx context.Context, path string, params map[string][]string, body io.Reader) (*Response, error) {
+func (c *Client) PutWithContext(ctx context.Context, path string, params map[string][]string, body interface{}) (*Response, error) {
 	return c.do(ctx, http.MethodPut, path, params, body)
 }
 
@@ -115,7 +117,7 @@ func (c *Client) PutWithContext(ctx context.Context, path string, params map[str
 // 	* @param path: client path that request will send to
 // 	* @param parameters: query parameters
 func (c *Client) Delete(path string, params map[string][]string) (*Response, error) {
-	return c.do(context.Background(), http.MethodDelete, path, params, nil)
+	return c.DeleteWithContext(context.Background(), path, params)
 }
 
 // DeleteWithContext
@@ -139,11 +141,23 @@ func (c *Client) DeleteWithContext(ctx context.Context, path string, params map[
 // 	* @param path: client path that request will send to
 // 	* @param parameters: query parameters
 // 	* @param body: request payload to send
-func (c *Client) do(ctx context.Context, method, path string, params url.Values, body io.Reader) (*Response, error) {
-	// build the request
-	req, err := http.NewRequestWithContext(ctx, method, fmt.Sprintf("%s/%s", c.URL.String(), path), body)
+func (c *Client) do(ctx context.Context, method, path string, params url.Values, payload interface{}) (*Response, error) {
+	// build the request body
+	var body io.Reader
+	if payload != nil {
+		b, err := json.Marshal(&payload)
+		if err != nil {
+			return nil, fmt.Errorf("client: %s", err)
+		}
+		body = bytes.NewBuffer(b)
+	}
+
+	// build the request url
+	c.URL.Path = path
+	uri := c.URL.ResolveReference(c.URL)
+	req, err := http.NewRequestWithContext(ctx, method, uri.String(), body)
 	if err != nil {
-		return nil, fmt.Errorf(`%s, could not build %s request "%s"`, err, method, req.RequestURI)
+		return nil, fmt.Errorf(`client: %s, could not build %s request "%s"`, err, method, req.RequestURI)
 	}
 	req.Header = c.Headers
 	req.URL.RawQuery = params.Encode()
@@ -151,7 +165,7 @@ func (c *Client) do(ctx context.Context, method, path string, params url.Values,
 	// do the request
 	resp, err := c.client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf(`%s, could not make %s request "%s"`, err, method, req.RequestURI)
+		return nil, fmt.Errorf(`client: %s, could not make %s request "%s"`, err, method, req.RequestURI)
 	}
 
 	return &Response{

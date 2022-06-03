@@ -17,11 +17,11 @@ var (
 	configDirectory = "configs"
 
 	// This error will normally be thrown if the configDirectory does not exist.
-	ErrConfigsNotFound = errors.New("could not locate config values within the project")
+	ErrConfigsNotFound = errors.New("config: could not locate config values within the project")
 
 	// The struct must be a pointer for json.unmarshaling purposes. If the value
 	// is nil or not a pointer, json.Unmarshal returns an InvalidUnmarshalError.
-	ErrNonPointerStruct = errors.New("configuration should be a pointer to a struct type")
+	ErrNonPointerStruct = errors.New("config: configuration should be a pointer to a struct type")
 )
 
 // The application struct holds values specific to the apps configuration.
@@ -135,14 +135,14 @@ func unmarshal(path string, config interface{}) error {
 		// open file location
 		file, err := os.Open(path)
 		if err != nil {
-			return fmt.Errorf(`%v, could not open "%s"`, err, path)
+			return fmt.Errorf(`config: %v, could not open "%s"`, err, path)
 		}
 		defer file.Close()
 
 		// read file contents
 		data, err := ioutil.ReadAll(file)
 		if err != nil {
-			return fmt.Errorf(`%v, could not read "%s"`, err, path)
+			return fmt.Errorf(`config: %v, could not read "%s"`, err, path)
 		}
 
 		// Store JSON data into struct. To unmarshal JSON into a pointer, this
