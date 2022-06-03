@@ -4,6 +4,6 @@ A library of code that can be used in Go applications.
 
 ## Table of Contents
 
-* [Config](https://github.com/jobaldw/shared/tree/master/config "reading in JSON configs")
+* [Config](https://github.com/jobaldw/shared/tree/main/config "reading in JSON configs")
 
-![JB Designs](https://github.com/jobaldw/shared/blob/master/jb-icon.jpg)
+![JB Designs](https://github.com/jobaldw/shared/blob/main/jb-icon.jpg)
