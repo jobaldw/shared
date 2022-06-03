@@ -45,6 +45,16 @@ func New(conf config.Client) (*Client, error) {
 	}, err
 }
 
+// IsReady
+// 	Uses the clients health endpoint to determine if its up and running.
+func (c *Client) IsReady() (bool, error) {
+	resp, err := c.Get(c.health, nil)
+	if err != nil {
+		return false, err
+	}
+	return resp.IsSuccessful(), nil
+}
+
 // Get
 //	Makes a GET request to the client with a background context.Context().
 // 	* @param path: client path that request will send to

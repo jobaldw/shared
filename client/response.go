@@ -40,3 +40,9 @@ func (r *Response) GetBodyString() string {
 	bodyBytes, _ := ioutil.ReadAll(r.body)
 	return string(bodyBytes)
 }
+
+// IsSuccessful
+//	Checks if the response status code is 200 level.
+func (r *Response) IsSuccessful() bool {
+	return r.StatusCode > 199 && r.StatusCode < 300
+}
