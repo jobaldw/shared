@@ -54,4 +54,8 @@ go.work
 # Ignore code-workspaces
 *.code-workspace
 
+### Local testing files
+main.go
+configs
+
 # End of https://www.toptal.com/developers/gitignore/api/go,visualstudiocode
