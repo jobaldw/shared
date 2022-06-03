@@ -25,8 +25,8 @@ var (
 )
 
 // The application struct holds values specific to the apps configuration.
-// Intended on being used alone or in combination with other structs for
-// users to utilize.
+// Intended on being used alone or in combination with other structs for users
+// to utilize.
 type Application struct {
 	// Application name primarily used for logging/debugging purposes.
 	Name string `json:"name,omitempty"`
@@ -54,7 +54,7 @@ type Client struct {
 	// For client requests, certain headers such as Content-Length
 	// and Connection are automatically written when needed and
 	// values in Header may be ignored.
-	Headers map[string]string `json:"headers,omitempty"`
+	Headers map[string][]string `json:"headers,omitempty"`
 
 	// Health check path used for pinging the client
 	Health string `json:"health,omitempty"`
@@ -89,9 +89,9 @@ type Mongo struct {
 	Collections map[string]string `json:"collections,omitempty"`
 }
 
-/** Unmarshal
- * Reads in located JSON config files to parse into any given config struct
- * @param config: A pointer to a struct where values will be read into */
+// Unmarshal
+// 	Reads in located JSON config files to parse into any given config struct.
+//	* @param config: A pointer to a struct where values will be read into
 func Unmarshal(config interface{}) error {
 	// check if given configuration is a pointer to a struct
 	configType := reflect.ValueOf(config).Type()
@@ -125,10 +125,10 @@ func Unmarshal(config interface{}) error {
 	return ErrConfigsNotFound
 }
 
-/** unmarshal
- * Helper function that parses config json values into any given struct
- * @param path: File location where config values are stored
- * @param config: A pointer to a struct where values will be read into */
+// unmarshal
+// 	Helper function that parses config json values into any given struct.
+// 	* @param path: File location where config values are stored
+// 	* @param config: A pointer to a struct where values will be read into */
 func unmarshal(path string, config interface{}) error {
 	_, err := os.Stat(path)
 	if !os.IsNotExist(err) {

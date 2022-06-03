@@ -6,7 +6,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func Test_unmarshal(t *testing.T) {
+func Test_Unmarshal(t *testing.T) {
 	opts := cmp.Comparer(func(x, y error) bool {
 		return x.Error() == y.Error()
 	})
@@ -64,7 +64,7 @@ func Test_unmarshal(t *testing.T) {
 	}
 }
 
-func Test_read(t *testing.T) {
+func Test_unmarshal(t *testing.T) {
 	opts := cmp.Comparer(func(x, y error) bool {
 		return x.Error() == y.Error()
 	})
