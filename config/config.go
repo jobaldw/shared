@@ -125,6 +125,8 @@ func Unmarshal(config interface{}) error {
 	return ErrConfigsNotFound
 }
 
+/********** Helper functions **********/
+
 // unmarshal
 // 	Helper function that parses config json values into any given struct.
 // 	* @param path: File location where config values are stored
