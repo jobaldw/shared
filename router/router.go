@@ -25,10 +25,22 @@ type Message struct {
 // 	Creates a new http server and mux router with to readiness endpoints: "/health" and "/ready".
 // 	* @param port: TCP address the server will listen on
 // 	* @param clients: map of clients to test readiness
-func New(port int, clients map[string]client.Client) (http.Server, *mux.Router) {
+// 	* @param paths: rename live and ready paths
+func New(port int, clients map[string]client.Client, paths ...string) (http.Server, *mux.Router) {
 	r := mux.NewRouter()
-	r.HandleFunc("/health", health()).Methods(http.MethodGet)
-	r.HandleFunc("/ready", ready(clients)).Methods(http.MethodGet)
+	var livePath, readyPath = "", ""
+
+	switch len(paths) {
+	case 1:
+		livePath = "/" + paths[0]
+	case 2:
+		livePath, readyPath = "/"+paths[0], "/"+paths[1]
+	default:
+		livePath, readyPath = "/health", "/ready"
+	}
+
+	r.HandleFunc(livePath, health()).Methods(http.MethodGet)
+	r.HandleFunc(readyPath, ready(clients)).Methods(http.MethodGet)
 
 	return http.Server{Addr: fmt.Sprintf(":%d", port)}, r
 }
