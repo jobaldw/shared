@@ -28,7 +28,7 @@ type Message struct {
 // 	* @param paths: rename live and ready paths
 func New(port int, clients map[string]client.Client, paths ...string) (http.Server, *mux.Router) {
 	r := mux.NewRouter()
-	var livePath, readyPath = "", ""
+	livePath, readyPath := "", ""
 
 	switch len(paths) {
 	case 1:
