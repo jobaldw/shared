@@ -4,7 +4,7 @@ Utilizing the [gorilla/mux](https://github.com/gorilla/mux "gorilla/mux - v1.8.0
 
 ## How To Use
 
-Building a new router only takes a couple of lines of code.
+Building a new router only takes a few of lines of code.
 
 ``` go
 package main
@@ -17,25 +17,79 @@ import (
 )
 
 func main() {
-    srv, r := router.New(3001, nil) // here we are implementing a sever and passing back the created router
+    // here we are implementing a sever and passing back the created router
+    srv, r := router.New(3001, nil)
 
-    // The reason for sending the router back is for customization. Below we have 2 sever configurations.
-    //  1) We attach the router as the server's handler. 
-    //  2) We wrap the handler in a middle object and open up the cors policy.
+    // The reason for sending the router back is for customization. Below are 2 server handlers examples:
+    //  - 1) We attach the router with only its default endpoints as the server's handler.
+    //      e.g.     
+    //          srv.Handler = r
+    // 
+    //  - 2) We wrap the handler in a middleware object and open up the cors policy allowing the router's 
+    //      endpoints to have RBAC authentication.
+    //      e.g.
+    //          srv.Handler = cors.AllowAll().Handler(middleware.Handler(router))
     
-    // configuration (1)
-    srv.Handler = r
-
-    // configuration (2)
-    // srv.Handler = cors.AllowAll().Handler(middleware.Handler(router))
-
-    // We can even add more handlers
-    r.HandleFunc("/hello", helloWorld()).Methods(http.MethodGet)
-
+    srv.Handler = r // for this example we went with option (1)
 
     // start and listen on the port configured above
     if err := srv.ListenAndServe(); err != nil {
         // handle err
+    }
+}
+```
+
+### Rename Liveliness & Readiness Endpoints
+
+By default `/health` and `/ready` endpoints are added to the router, but they can be renamed using the `router.New()`.
+
+``` go
+package main
+
+import (
+    "encoding/json"
+    "net/http"
+
+    "github.com/jobaldw/shared/router"
+)
+
+func main() {
+    // The liveliness and readiness endpoints are updated based on whats populated (not populated) 
+    // by the variadic paths parameter. 
+    //  - One path input will only update the liveliness path
+    //  - Two path inputs will update liveliness and readiness paths
+    //  - Zero or more than two will use the default values
+    srv, r := router.New(3001, nil, "live","ping")
+    srv.Handler = r
+    if err := srv.ListenAndServe(); err != nil {
+        //...
+    }
+}
+```
+
+### Add More Handlers
+
+We can even add more handlers in addition to the liveliness and readiness handlers.
+
+``` go
+package main
+
+import (
+    "encoding/json"
+    "net/http"
+
+    "github.com/jobaldw/shared/router"
+)
+
+func main() {
+    srv, r := router.New(3001, nil, "live","ping")
+    srv.Handler = r
+
+    // Here we are adding another GET endpoint with the path "/health"
+    r.HandleFunc("/hello", helloWorld()).Methods(http.MethodGet)
+
+    if err := srv.ListenAndServe(); err != nil {
+        //...
     }
 }
 
