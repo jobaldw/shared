@@ -77,5 +77,3 @@ $ go run main.go
 &{/ping 0xc00007f1d0 map[content-type:[application/json]] https://www.test.com}
 &{/v2/health 0xc00007f290 map[content-type:[application/json]] https://www.fake.com}
 ```
-
-![JB Designs](https://github.com/jobaldw/shared/blob/main/jb-icon.jpg)

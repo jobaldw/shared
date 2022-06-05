@@ -2,6 +2,7 @@
 package config
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -36,14 +37,14 @@ func Test_Unmarshal(t *testing.T) {
 			args: args{
 				conf: newStruct,
 			},
-			resp: ErrNonPointerStruct,
+			resp: fmt.Errorf("%s: %s", packageKey, ErrNonPointerStruct),
 		},
 		{
 			name: "no config files",
 			args: args{
 				conf: &newStruct,
 			},
-			resp: ErrConfigsNotFound,
+			resp: fmt.Errorf("%s: %s", packageKey, ErrConfigsNotFound),
 		},
 	}
 	for _, test := range tests {
