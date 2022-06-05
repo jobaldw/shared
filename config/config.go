@@ -19,7 +19,7 @@ const (
 
 var (
 	// The config directory name where files with JSON value configs will live.
-	configDirectory = "config"
+	configDirectory = "configs"
 
 	// This error will normally be thrown if the configDirectory does not exist.
 	ErrConfigsNotFound = errors.New("could not locate config values within the project")
