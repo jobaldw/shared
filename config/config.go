@@ -9,19 +9,24 @@ import (
 	"reflect"
 )
 
-// The root directory of any project
-const root = "."
+const (
+	// The root directory of any project
+	root = "."
+
+	// package logging key
+	packageKey = "config"
+)
 
 var (
 	// The config directory name where files with JSON value configs will live.
-	configDirectory = "configs"
+	configDirectory = "config"
 
 	// This error will normally be thrown if the configDirectory does not exist.
-	ErrConfigsNotFound = errors.New("config: could not locate config values within the project")
+	ErrConfigsNotFound = errors.New("could not locate config values within the project")
 
 	// The struct must be a pointer for json.unmarshaling purposes. If the value
 	// is nil or not a pointer, json.Unmarshal returns an InvalidUnmarshalError.
-	ErrNonPointerStruct = errors.New("config: configuration should be a pointer to a struct type")
+	ErrNonPointerStruct = errors.New("configuration should be a pointer to a struct type")
 )
 
 // The application struct holds values specific to the apps configuration.
@@ -96,13 +101,13 @@ func Unmarshal(config interface{}) error {
 	// check if given configuration is a pointer to a struct
 	configType := reflect.ValueOf(config).Type()
 	if configType.Kind() != reflect.Ptr || configType.Elem().Kind() != reflect.Struct {
-		return ErrNonPointerStruct
+		return fmt.Errorf("%s: %s", packageKey, ErrNonPointerStruct)
 	}
 
 	// read the root director of the project
 	root, err := ioutil.ReadDir(root)
 	if err != nil {
-		return err
+		return fmt.Errorf("%s: %s", packageKey, err)
 	}
 
 	// search for the config directory and its files
@@ -110,19 +115,19 @@ func Unmarshal(config interface{}) error {
 		if folder.IsDir() && folder.Name() == configDirectory {
 			configs, err := ioutil.ReadDir(folder.Name())
 			if err != nil {
-				return err
+				return fmt.Errorf("%s: %s", packageKey, err)
 			}
 			for _, file := range configs {
 				path := fmt.Sprintf("./%s/%s", folder.Name(), file.Name())
 				if err := unmarshal(path, config); err != nil {
-					return err
+					return fmt.Errorf("%s: %s", packageKey, err)
 				}
 			}
 			return nil
 		}
 	}
 
-	return ErrConfigsNotFound
+	return fmt.Errorf("%s: %s", packageKey, ErrConfigsNotFound)
 }
 
 /********** Helper functions **********/
@@ -137,14 +142,14 @@ func unmarshal(path string, config interface{}) error {
 		// open file location
 		file, err := os.Open(path)
 		if err != nil {
-			return fmt.Errorf(`config: %v, could not open "%s"`, err, path)
+			return fmt.Errorf(`%v, could not open "%s"`, err, path)
 		}
 		defer file.Close()
 
 		// read file contents
 		data, err := ioutil.ReadAll(file)
 		if err != nil {
-			return fmt.Errorf(`config: %v, could not read "%s"`, err, path)
+			return fmt.Errorf(`%v, could not read "%s"`, err, path)
 		}
 
 		// Store JSON data into struct. To unmarshal JSON into a pointer, this

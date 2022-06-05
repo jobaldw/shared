@@ -13,6 +13,8 @@ import (
 	"github.com/jobaldw/shared/config"
 )
 
+const packageKey = "client"
+
 // A simple client that will also handle http requests. Uses the net/http and net/url packages.
 type Client struct {
 	// health path used for client health and ready checks
@@ -34,7 +36,7 @@ type Client struct {
 func New(conf config.Client) (*Client, error) {
 	url, err := url.Parse(conf.URL)
 	if err != nil {
-		return nil, fmt.Errorf("%s, could not create client", err)
+		return nil, fmt.Errorf("%s: %s, could not create client", packageKey, err)
 	}
 
 	return &Client{
@@ -52,7 +54,7 @@ func New(conf config.Client) (*Client, error) {
 func (c *Client) IsReady() (bool, error) {
 	resp, err := c.Get(c.health, nil)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("%s: %s", packageKey, err)
 	}
 	return resp.IsSuccessful(), nil
 }
@@ -147,7 +149,7 @@ func (c *Client) do(ctx context.Context, method, path string, params url.Values,
 	if payload != nil {
 		b, err := json.Marshal(&payload)
 		if err != nil {
-			return nil, fmt.Errorf("client: %s", err)
+			return nil, fmt.Errorf("%s: %s", packageKey, err)
 		}
 		body = bytes.NewBuffer(b)
 	}
@@ -157,7 +159,7 @@ func (c *Client) do(ctx context.Context, method, path string, params url.Values,
 	uri := c.URL.ResolveReference(c.URL)
 	req, err := http.NewRequestWithContext(ctx, method, uri.String(), body)
 	if err != nil {
-		return nil, fmt.Errorf("client: %s, could not build request", err)
+		return nil, fmt.Errorf("%s: %s, could not build request", packageKey, err)
 	}
 	req.Header = c.Headers
 	req.URL.RawQuery = params.Encode()
@@ -165,7 +167,7 @@ func (c *Client) do(ctx context.Context, method, path string, params url.Values,
 	// do the request
 	resp, err := c.client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("client: %s, could not make request", err)
+		return nil, fmt.Errorf("%s: %s, could not make request", packageKey, err)
 	}
 
 	return &Response{
