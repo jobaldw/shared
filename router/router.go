@@ -7,7 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/jobaldw/shared/client"
+	"github.com/jobaldw/shared/v2/client"
 )
 
 // The response payload in the form of an error.

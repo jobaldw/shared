@@ -8,7 +8,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/jobaldw/shared/config"
+	"github.com/jobaldw/shared/v2/config"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

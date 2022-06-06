@@ -1,4 +1,4 @@
-module github.com/jobaldw/shared
+module github.com/jobaldw/shared/v2
 
 go 1.18
 
@@ -22,6 +22,3 @@ require (
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e // indirect
 	golang.org/x/text v0.3.5 // indirect
 )
-
-// Duplicated tag causing a security error due to checksum mismatches.
-retract v1.0.0

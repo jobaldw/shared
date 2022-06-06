@@ -41,8 +41,8 @@ package main
 import (
     "fmt"
 
-    "github.com/jobaldw/shared/client"
-    "github.com/jobaldw/shared/config"
+    "github.com/jobaldw/shared/v2/client"
+    "github.com/jobaldw/shared/v2/config"
 )
 
 func main() {

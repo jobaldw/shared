@@ -5,8 +5,8 @@ import (
 	"io"
 	"testing"
 
-	"github.com/jobaldw/shared/config"
-	"github.com/jobaldw/shared/test/mock"
+	"github.com/jobaldw/shared/v2/config"
+	"github.com/jobaldw/shared/v2/test/mock"
 )
 
 func TestClient_GetBody(t *testing.T) {

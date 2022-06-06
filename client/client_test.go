@@ -7,8 +7,8 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 
-	"github.com/jobaldw/shared/config"
-	"github.com/jobaldw/shared/test/mock"
+	"github.com/jobaldw/shared/v2/config"
+	"github.com/jobaldw/shared/v2/test/mock"
 )
 
 func TestClient_IsReady(t *testing.T) {
