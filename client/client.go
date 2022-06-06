@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/jobaldw/shared/config"
+	"github.com/jobaldw/shared/v2/config"
 )
 
 const packageKey = "client"

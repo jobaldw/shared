@@ -36,7 +36,7 @@ In this example, we created a new struct that has a combination of the package's
 ``` go
 package main
 
-import "github.com/jobaldw/shared/config"
+import "github.com/jobaldw/shared/v2/config"
 
 func main() {
     newStruct := struct{

@@ -13,7 +13,7 @@ import (
     "encoding/json"
     "net/http"
 
-    "github.com/jobaldw/shared/router"
+    "github.com/jobaldw/shared/v2/router"
 )
 
 func main() {
@@ -50,7 +50,7 @@ import (
     "encoding/json"
     "net/http"
 
-    "github.com/jobaldw/shared/router"
+    "github.com/jobaldw/shared/v2/router"
 )
 
 func main() {
@@ -78,7 +78,7 @@ import (
     "encoding/json"
     "net/http"
 
-    "github.com/jobaldw/shared/router"
+    "github.com/jobaldw/shared/v2/router"
 )
 
 func main() {
