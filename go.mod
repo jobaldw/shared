@@ -2,9 +2,8 @@ module github.com/jobaldw/shared
 
 go 1.18
 
-require github.com/google/go-cmp v0.5.8
-
 require (
+	github.com/google/go-cmp v0.5.8
 	github.com/gorilla/mux v1.8.0
 	github.com/rs/cors v1.8.2
 	go.mongodb.org/mongo-driver v1.9.1
@@ -23,3 +22,6 @@ require (
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e // indirect
 	golang.org/x/text v0.3.5 // indirect
 )
+
+// Duplicated tag causing a security error due to checksum mismatches.
+retract v1.0.0
