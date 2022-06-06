@@ -31,7 +31,7 @@ func main() {
 		// handle error
 	}
 
-	// The GetCollection() gives you the ability interact with the collection's CRUD operations.
+	// The GetCollection() gives you the ability to interact with the collection's CRUD operations.
 	key1 := mongoClient.GetCollection("key1")
 	key1.FindOne(context.Background(), nil)
 }
