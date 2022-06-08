@@ -10,4 +10,7 @@
 
 # Table of Contents
 
+* [Client](https://github.com/jobaldw/shared/tree/main/client "adding/creating clients to your application")
 * [Config](https://github.com/jobaldw/shared/tree/main/config "reading in JSON configs")
+* [Mongo](https://github.com/jobaldw/shared/tree/main/mongo "connecting to mongo")
+* [Router](https://github.com/jobaldw/shared/tree/main/router "setting up your server")
