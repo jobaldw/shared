@@ -13,6 +13,7 @@ import (
 	"github.com/jobaldw/shared/v2/config"
 )
 
+// package logging key
 const packageKey = "client"
 
 // A simple client that will also handle http requests. Uses the net/http and net/url packages.
@@ -51,8 +52,9 @@ func New(conf config.Client) (*Client, error) {
 
 // IsReady
 // 	Uses the clients health endpoint to determine if its up and running.
-func (c *Client) IsReady() (bool, error) {
-	resp, err := c.Get(c.health, nil)
+// 	* @param path: client path that request will send to
+func (c *Client) IsReady(ctx context.Context) (bool, error) {
+	resp, err := c.GetWithContext(ctx, c.health, nil)
 	if err != nil {
 		return false, fmt.Errorf("%s: %s", packageKey, err)
 	}
