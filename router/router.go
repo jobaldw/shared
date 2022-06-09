@@ -1,13 +1,14 @@
 package router
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
 
-	"github.com/jobaldw/shared/client"
+	"github.com/jobaldw/shared/v2/client"
 )
 
 // The response payload in the form of an error.
@@ -97,8 +98,9 @@ func health() http.HandlerFunc {
 // 	* @param clients: map of clients to test readiness
 func ready(clients map[string]client.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.Background()
 		for _, client := range clients {
-			isReady, err := client.IsReady()
+			isReady, err := client.IsReady(ctx)
 			if err != nil {
 				RespondError(w, json.Marshal, http.StatusBadGateway, err)
 				return

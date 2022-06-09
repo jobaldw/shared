@@ -10,8 +10,8 @@ package main
 import (
 	"context"
 
-	"github.com/jobaldw/shared/config"
-	"github.com/jobaldw/shared/mongo"
+	"github.com/jobaldw/shared/v2/config"
+	"github.com/jobaldw/shared/v2/mongo"
 )
 
 func main() {
