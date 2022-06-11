@@ -23,7 +23,7 @@ type Message struct {
 }
 
 // New
-// 	Creates a new http server and mux router with to readiness endpoints: "/health" and "/ready".
+// 	Creates a new http server and mux router with two readiness endpoints: "/health" and "/ready".
 // 	* @param port: TCP address the server will listen on
 // 	* @param clients: map of clients to test readiness
 // 	* @param paths: rename live and ready paths
@@ -77,7 +77,8 @@ func Respond(w http.ResponseWriter, encoding func(v any) ([]byte, error), code i
 }
 
 // Vars
-// 	returns the route variables for the current request, if any.
+// 	Returns the route variables for the current request, if any.
+// 	* @param r: an HTTP request to be sent by the client
 func Vars(r *http.Request) map[string]string {
 	return mux.Vars(r)
 }
