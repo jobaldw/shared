@@ -90,6 +90,12 @@ type Mongo struct {
 	// form before encoding.
 	URI string `json:"uri,omitempty"`
 
+	// mongo database user
+	Username string `json:"username,omitempty"`
+
+	// mongo database password
+	Password string `json:"password,omitempty"`
+
 	// collections that exist within the defined database.
 	Collections map[string]string `json:"collections,omitempty"`
 }
