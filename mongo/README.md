@@ -17,6 +17,8 @@ import (
 func main() {
 
 	// Use the shared config.Mongo() struct for mongo client configurations.
+	// NOTE: If you use the URI, you will need to user and password url encoding. Using the Username and
+	// Password options will handle the encoding for you.
 	conf := config.Mongo{
 		Database: "dbName",
 		URI:      "bW9uZ28rc3ZyOi8vPHlvdXJNb25nb1VSST4",
