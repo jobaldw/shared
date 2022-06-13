@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/jobaldw/shared/v2/config"
@@ -54,16 +55,10 @@ type Mongo struct {
 // 	Implements a new mongo object that connects to a database and creates a handle for mongo collections.
 // 	* @param conf: mongo configuration
 func New(conf config.Mongo) (*Mongo, error) {
-	// decode the Base64 encoded mongo uri
-	rawURI, err := base64.StdEncoding.DecodeString(conf.URI)
-	if err != nil {
-		return nil, fmt.Errorf("%s: %s, could not decode url", packageKey, err)
-	}
-
 	// builds the mongo uri
-	url, err := url.Parse(string(rawURI))
+	url, err := getURI(conf)
 	if err != nil {
-		return nil, fmt.Errorf("%s: %s, could not parse url", packageKey, err)
+		return nil, err
 	}
 
 	// build the mongo object with a connected mongo instance and database collection objects
@@ -144,4 +139,31 @@ func (m *Mongo) connect() (err error) {
 	m.Database = client.Database(m.Name)
 	m.Host, m.User = m.URI.Hostname(), m.URI.User.Username()
 	return err
+}
+
+// getURI
+// 	Builds the decodes and builds the mongo db url.
+// 	* @param conf: mongo configuration
+func getURI(conf config.Mongo) (*url.URL, error) {
+	// decode the Base64 encoded mongo uri
+	rawURI, err := base64.StdEncoding.DecodeString(conf.URI)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %s", packageKey, err)
+	}
+
+	// use configured username and password over the uri
+	uri := string(rawURI)
+	if conf.Password != "" && conf.Username != "" {
+		user := url.QueryEscape(conf.Username)
+		pass := url.QueryEscape(conf.Password)
+		split := strings.Split(uri, "@")
+		uri = "mongodb+srv://" + user + ":" + pass + "@" + split[1]
+	}
+
+	url, err := url.Parse(uri)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %s", packageKey, err)
+	}
+
+	return url, nil
 }

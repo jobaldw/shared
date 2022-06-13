@@ -91,6 +91,8 @@ type Datasource struct {
 type Mongo struct {
     Database    string            `json:"database,omitempty"`
     URI         string            `json:"uri,omitempty"`
+    Username    string            `json:"username,omitempty"`
+	Password    string            `json:"password,omitempty"`
     Collections map[string]string `json:"collections,omitempty"`
 }
 ```
