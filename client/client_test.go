@@ -2,13 +2,14 @@
 package client
 
 import (
+	"context"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 
-	"github.com/jobaldw/shared/config"
-	"github.com/jobaldw/shared/test/mock"
+	"github.com/jobaldw/shared/v2/config"
+	"github.com/jobaldw/shared/v2/test/mock"
 )
 
 func TestClient_IsReady(t *testing.T) {
@@ -25,6 +26,7 @@ func TestClient_IsReady(t *testing.T) {
 	tests := []struct {
 		name string
 		conf client
+		args context.Context
 		resp resp
 	}{
 		{
@@ -33,6 +35,7 @@ func TestClient_IsReady(t *testing.T) {
 				URL:    svr.URL,
 				Health: "/health",
 			},
+			args: context.Background(),
 			resp: resp{
 				IsReady: true,
 				Err:     nil,
@@ -47,7 +50,7 @@ func TestClient_IsReady(t *testing.T) {
 				return
 			}
 
-			isReady, err := client.IsReady()
+			isReady, err := client.IsReady(test.args)
 			got := resp{
 				IsReady: isReady,
 				Err:     err,

@@ -1,10 +1,9 @@
-module github.com/jobaldw/shared
+module github.com/jobaldw/shared/v2
 
 go 1.18
 
-require github.com/google/go-cmp v0.5.8
-
 require (
+	github.com/google/go-cmp v0.5.8
 	github.com/gorilla/mux v1.8.0
 	github.com/rs/cors v1.8.2
 	go.mongodb.org/mongo-driver v1.9.1
