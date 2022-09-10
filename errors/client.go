@@ -37,5 +37,8 @@ func NewClientErr(client, msg string, err error, resp client.Response) ClientErr
 //
 // Error implements the error interface.
 func (ce ClientErr) Error() string {
-	return fmt.Sprintf("[%s] error: %v", ce.Client, ce.Err)
+	if ce.StatusCode == 0 {
+		return fmt.Sprintf("[%s] error: %v", ce.Client, ce.Err)
+	}
+	return fmt.Sprintf("[%s] error: %d | %v", ce.Client, ce.StatusCode, ce.Err)
 }
