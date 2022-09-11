@@ -13,7 +13,7 @@ const FunctionKey = "function"
 //	* @param log: zerolog Logger
 //	* @param handler: name of the handler call function
 //	* @param err: err that occurred during handler call
-func LogEvent(log zerolog.Logger, handler string, err error) *zerolog.Event {
+func LogEvent(log *zerolog.Logger, handler string, err error) *zerolog.Event {
 	if err != nil {
 		return log.Err(err).Stack()
 	}
