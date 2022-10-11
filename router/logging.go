@@ -8,11 +8,7 @@ import (
 const FunctionKey = "function"
 
 // LogEvent
-//
-//	Logs the client response at the end of a handler call.
-//	* @param log: zerolog Logger
-//	* @param handler: name of the handler call function
-//	* @param err: err that occurred during handler call
+// logs the client response at the end of a handler call.
 func LogEvent(log *zerolog.Logger, handler string, err error) *zerolog.Event {
 	if err != nil {
 		return log.Err(err).Stack()

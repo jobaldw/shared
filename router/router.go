@@ -1,3 +1,10 @@
+/*
+Package router implements a server with a router and two endpoints used
+for readiness and liveliness checks.
+
+All functions that require a context to be passed should be given one from
+the service handler request to correctly handle cancellations.
+*/
 package router
 
 import (
@@ -23,10 +30,12 @@ type Message struct {
 }
 
 // New
-// 	Creates a new http server and mux router with two readiness endpoints: "/health" and "/ready".
-// 	* @param port: TCP address the server will listen on
-// 	* @param clients: map of clients to test readiness
-// 	* @param paths: rename live and ready paths
+// creates a new http server and mux router with two endpoints for
+// readiness and liveliness.
+//
+// By default a client's readiness and liveliness endpoints are
+// "/health" and "/ready", but this can be overwritten using the paths
+// variadic parameter.
 func New(port int, clients map[string]client.Client, paths ...string) (http.Server, *mux.Router) {
 	r := mux.NewRouter()
 	livePath, readyPath := "", ""
@@ -47,22 +56,16 @@ func New(port int, clients map[string]client.Client, paths ...string) (http.Serv
 }
 
 // RespondError
-//	Writes a client error reply based on its passed in encoding func.
-// 	* @param w: the handlers way to construct a response
-// 	* @param encoding: a func to encode the payload, e.g. "json.Marshal()" or "xml.Marshal()"
-// 	* @param code: HTTP response status code
-// 	* @param err: response error
+// writes a client error reply based on its passed in encoding func.
+// (e.g. "json.Marshal()" or "xml.Marshal()")
 func RespondError(w http.ResponseWriter, encoding func(v any) ([]byte, error), code int, err error) {
 	e := Error{Err: err.Error()}
 	Respond(w, encoding, code, e)
 }
 
 // Respond
-//	Writes a client message reply based on its passed in encoding func.
-// 	* @param w: the handlers way to construct a response
-// 	* @param encoding: a func to encode the payload; normally json.Marshal() or xml.Marshal()
-// 	* @param code: HTTP response status code
-// 	* @param payload: response body
+// writes a client message reply based on its passed in encoding func
+// (e.g. "json.Marshal()" or "xml.Marshal()").
 func Respond(w http.ResponseWriter, encoding func(v any) ([]byte, error), code int, payload interface{}) {
 	response, _ := encoding(payload)
 
@@ -77,16 +80,15 @@ func Respond(w http.ResponseWriter, encoding func(v any) ([]byte, error), code i
 }
 
 // Vars
-// 	Returns the route variables for the current request, if any.
-// 	* @param r: an HTTP request to be sent by the client
+// returns the route variables for the current request, if any.
 func Vars(r *http.Request) map[string]string {
 	return mux.Vars(r)
 }
 
-/********** Helper functions **********/
+/********** helper functions **********/
 
 // health
-// 	Responses with "200 OK" status whenever called.
+// responses with "200 OK" status whenever called.
 func health() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		code := http.StatusOK
@@ -95,8 +97,7 @@ func health() http.HandlerFunc {
 }
 
 // ready
-// 	Calls every dependent clients ready check endpoint.
-// 	* @param clients: map of clients to test readiness
+// calls every dependent clients ready check endpoint.
 func ready(clients map[string]client.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.Background()

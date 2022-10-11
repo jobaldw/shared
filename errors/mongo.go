@@ -2,41 +2,34 @@ package errors
 
 import "fmt"
 
-// Mongo operation key
 const (
-	Insert = "insert"
-	Update = "update"
-	Read   = "read"
-	Delete = "delete"
+	Insert = "insert" // Insert Mongo operation key
+	Update = "update" // Update Mongo operation key
+	Read   = "read"   // Read Mongo operation key
+	Delete = "delete" // Delete Mongo operation key
 )
 
 var (
-	// an error ocurred trying to delete a document
-	ErrDeleteFailed = fmt.Errorf("could not remove document")
-
-	// an error ocurred trying to create a new document
-	ErrInsertFailed = fmt.Errorf("could not create document")
-
-	// an error ocurred trying to update a document
-	ErrUpdateFailed = fmt.Errorf("could not update document")
-
-	// an error ocurred trying to retrieve a document
-	ErrNoBudgetsFound = fmt.Errorf("no documents were found")
+	ErrDeleteFailed   = fmt.Errorf("could not remove document") // an error ocurred trying to delete a document
+	ErrInsertFailed   = fmt.Errorf("could not create document") // an error ocurred trying to create a new document
+	ErrUpdateFailed   = fmt.Errorf("could not update document") // an error ocurred trying to update a document
+	ErrNoBudgetsFound = fmt.Errorf("no documents were found")   // an error ocurred trying to retrieve a document
 )
 
 // struct for mongo errors
 type MongoErr struct {
-	Operation  string `json:"operation,omitempty"`
+	// Mongo operation that the error occurred
+	Operation string `json:"operation,omitempty"`
+
+	// the Mongo collection name
 	Collection string `json:"collection,omitempty"`
-	Err        error  `json:"error,omitempty"`
+
+	// the error that occurred
+	Err error `json:"error,omitempty"`
 }
 
 // NewMongoErr
-//
-//	Creates and fills a new MongoErr struct.
-//	* @param op: the operation
-//	* @param col: the mongo collection
-//	* @param err: an error
+// creates and fills a new MongoErr struct.
 func NewMongoErr(op, col string, err error) MongoErr {
 	operation := ""
 	switch op {
@@ -57,8 +50,7 @@ func NewMongoErr(op, col string, err error) MongoErr {
 }
 
 // Error
-//
-// Error implements the error interface.
+// implements the error interface.
 func (me MongoErr) Error() string {
 	err := me.Err
 	if err == nil {

@@ -1,3 +1,13 @@
+/*
+Package client implements a client with the ability to make HTTP request
+and handler their responses.
+
+The package client is limited to the below request methods:
+  - DELETE, GET, POST, PUT
+
+All functions that require a context to be passed should be given one from
+the service handler request to correctly handle cancellations.
+*/
 package client
 
 import (
@@ -13,28 +23,26 @@ import (
 	"github.com/jobaldw/shared/v2/config"
 )
 
-// package logging key
-const packageKey = "client"
+const packageKey = "client" // package logging key
 
-// A simple client that will also handle http requests. Uses the net/http and net/url packages.
+// A simple client that will also handle http requests. Uses the
+// "net/http "and "net/url" packages.
 type Client struct {
 	// health path used for client health and ready checks
 	health string
 
-	// The net/http client struct.
+	// the net/http client struct
 	client *http.Client
 
-	// Key-value pairs in an HTTP header.
+	// key-value pairs in an HTTP header
 	Headers http.Header
 
-	// A parsed URL (technically a URI)
+	// a parsed URL (technically a URI)
 	URL *url.URL
 }
 
 // New
-//
-//	Creates a new client from the shared config.Client() struct.
-//	* @param conf: client configurations
+// creates a new client from the shared config.Client() struct.
 func New(conf config.Client) (*Client, error) {
 	url, err := url.Parse(conf.URL)
 	if err != nil {
@@ -52,9 +60,7 @@ func New(conf config.Client) (*Client, error) {
 }
 
 // IsReady
-//
-//	Uses the clients health endpoint to determine if its up and running.
-//	* @param path: client path that request will send to
+// uses the clients health endpoint to determine if its up and running.
 func (c *Client) IsReady(ctx context.Context) (bool, error) {
 	resp, err := c.GetWithContext(ctx, c.health, nil)
 	if err != nil {
@@ -64,97 +70,58 @@ func (c *Client) IsReady(ctx context.Context) (bool, error) {
 }
 
 // Get
-//
-//	Makes a GET request to the client with a background context.Context().
-//	* @param path: client path that request will send to
-//	* @param parameters: query parameters
+// makes a GET method request to the client with a background context.
 func (c *Client) Get(path string, params map[string][]string) (*Response, error) {
 	return c.GetWithContext(context.Background(), path, params)
 }
 
 // GetWithContext
-//
-//	Makes a GET request to the client with any passed in context.Context().
-//	* @param ctx: context used to handle any cancellations
-//	* @param path: client path that request will send to
-//	* @param parameters: query parameters
+// makes a GET method request to the client with any passed in context.
 func (c *Client) GetWithContext(ctx context.Context, path string, params map[string][]string) (*Response, error) {
 	return c.do(ctx, http.MethodGet, path, params, nil)
 }
 
 // Post
-//
-//	Makes a POST request to the client with any passed in context.Context().
-//	* @param path: client path that request will send to
-//	* @param parameters: query parameters
-//	* @param body: request body
+// makes a POST method request to the client with a background context.
 func (c *Client) Post(path string, params map[string][]string, body interface{}) (*Response, error) {
 	return c.PostWithContext(context.Background(), path, params, body)
 }
 
 // PostWithContext
-//
-//	Makes a POST request to the client with any passed in context.Context().
-//	* @param ctx: context used to handle any cancellations
-//	* @param path: client path that request will send to
-//	* @param parameters: query parameters
-//	* @param body: request body
+// makes a POST method request to the client with any passed in context.
 func (c *Client) PostWithContext(ctx context.Context, path string, params map[string][]string, body interface{}) (*Response, error) {
 	return c.do(ctx, http.MethodPost, path, params, body)
 }
 
 // Put
-//
-//	Makes a PUT request to the client with any passed in context.Context().
-//	* @param path: client path that request will send to
-//	* @param parameters: query parameters
-//	* @param body: request body
+// makes a PUT method request to the client with a background context.
 func (c *Client) Put(path string, params map[string][]string, body interface{}) (*Response, error) {
 	return c.PutWithContext(context.Background(), path, params, body)
 }
 
 // PutWithContext
-//
-//	Makes a PUT request to the client with any passed in context.Context().
-//	* @param ctx: context used to handle any cancellations
-//	* @param path: client path that request will send to
-//	* @param parameters: query parameters
-//	* @param body: request body
+// makes a PUT method request to the client with any passed in context.
 func (c *Client) PutWithContext(ctx context.Context, path string, params map[string][]string, body interface{}) (*Response, error) {
 	return c.do(ctx, http.MethodPut, path, params, body)
 }
 
 // Delete
-//
-//	Makes a DELETE request to the client with a background context.Context().
-//	* @param path: client path that request will send to
-//	* @param parameters: query parameters
+// makes a DELETE method request to the client with a background context.
 func (c *Client) Delete(path string, params map[string][]string) (*Response, error) {
 	return c.DeleteWithContext(context.Background(), path, params)
 }
 
 // DeleteWithContext
-//
-//	Makes a DELETE request to the client with any passed in context.Context().
-//	* @param ctx: context used to handle any cancellations
-//	* @param path: client path that request will send to
-//	* @param parameters: query parameters
+// makes a DELETE method request to the client with any passed in context.
 func (c *Client) DeleteWithContext(ctx context.Context, path string, params map[string][]string) (*Response, error) {
 	return c.do(ctx, http.MethodDelete, path, params, nil)
 }
 
-/********** Helper functions **********/
+/********** helper functions **********/
 
 // do
-//
-// Builds and makes the client request using the net/https package using NewRequestWithContext(). If one of the
-// functions without context parameters are used (Get, Put, Post, Delete) then the context will be set to the
-// background, else it will use whatever is passed in.
-//   - @param ctx: context used to handle any cancellations
-//   - @param method: HTTP request method
-//   - @param path: client path that request will send to
-//   - @param parameters: query parameters
-//   - @param body: request payload to send
+// builds and makes the client request using the "net/https" package with
+// NewRequestWithContext().
 func (c *Client) do(ctx context.Context, method, path string, params url.Values, payload interface{}) (*Response, error) {
 	// build the request body
 	var body io.Reader
