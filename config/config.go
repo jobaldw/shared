@@ -1,10 +1,20 @@
+/*
+Package config reads in configuration files to be used within an
+application.
+
+The package config is not limited to a number of files. There are only
+two restrictions:
+ 1. The configurations must be in JSON files
+ 2. The JSON files must be in a directory at the root of the
+    application and be called "/config".
+*/
 package config
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io/ioutil" // TODO: upgrade package
 	"os"
 	"reflect"
 )
@@ -18,20 +28,17 @@ const (
 )
 
 var (
-	// The config directory name where files with JSON value configs will live.
+	// The config directory name where files with JSON value configs will
+	// live.
 	configDirectory = "configs"
 
-	// This error will normally be thrown if the configDirectory does not exist.
-	ErrConfigsNotFound = errors.New("could not locate config values within the project")
-
-	// The struct must be a pointer for json.unmarshaling purposes. If the value
-	// is nil or not a pointer, json.Unmarshal returns an InvalidUnmarshalError.
-	ErrNonPointerStruct = errors.New("configuration should be a pointer to a struct type")
+	ErrConfigsNotFound  = errors.New("could not locate config values within the project")  // configDirectory does not exist
+	ErrNonPointerStruct = errors.New("configuration should be a pointer to a struct type") // invalid unmarshal error for nil or non pointer types
 )
 
 // The application struct holds values specific to the apps configuration.
-// Intended on being used alone or in combination with other structs for users
-// to utilize.
+// Intended on being used alone or in combination with other structs for
+// users to utilize.
 type Application struct {
 	// Application name primarily used for logging/debugging purposes.
 	Name string `json:"name,omitempty"`
@@ -39,14 +46,14 @@ type Application struct {
 	// Server port that the microservice communicates through.
 	Port int `json:"port,omitempty"`
 
-	// Used to set logging severity. Field is a string value to users can use
-	// this value with any logging packages such as zerolog, logrus, viper
-	// or an internal logging package.
+	// Used to set logging severity. Field is a string value to users can
+	// use this value with any logging packages such as zerolog, logrus,
+	// viper or an internal logging package.
 	LogLevel string `json:"log_level,omitempty"`
 }
 
-// Holds multiple Client objects that can be used within the app via a map to
-// allow users to keep client configurations separate.
+// Holds multiple Client objects that can be used within the app via a map
+// to allow users to keep client configurations separate.
 type Clients struct {
 	// A map of string to Client configs
 	Clients map[string]Client `json:"clients,omitempty"`
@@ -73,8 +80,8 @@ type Client struct {
 	URL string `json:"url,omitempty"`
 }
 
-// Holds multiple Mongo objects that can be used within the app via a map to
-// allow users to keep mongo configurations separate.
+// Holds multiple Mongo objects that can be used within the app via a map
+// to allow users to keep mongo configurations separate.
 type Datasource struct {
 	// A map of string to Mongo configs
 	Mongo map[string]Mongo `json:"mongo,omitempty"`
@@ -86,8 +93,8 @@ type Mongo struct {
 	// The name of the database to connect to.
 	Database string `json:"database,omitempty"`
 
-	// mongo uri with authentication encoded in base64. Should be in mongodb+svr://
-	// form before encoding.
+	// mongo uri with authentication encoded in base64. Should be in
+	// "mongodb+svr://" form before encoding.
 	URI string `json:"uri,omitempty"`
 
 	// mongo database user
@@ -101,8 +108,10 @@ type Mongo struct {
 }
 
 // Unmarshal
-// 	Reads in located JSON config files to parse into any given config struct.
-//	* @param config: A pointer to a struct where values will be read into
+// reads in located JSON config files to parse into any given config
+// struct.
+//
+// The passed in config should be a pointer to a struct.
 func Unmarshal(config interface{}) error {
 	// check if given configuration is a pointer to a struct
 	configType := reflect.ValueOf(config).Type()
@@ -136,12 +145,8 @@ func Unmarshal(config interface{}) error {
 	return fmt.Errorf("%s: %s", packageKey, ErrConfigsNotFound)
 }
 
-/********** Helper functions **********/
+/********** helper functions **********/
 
-// unmarshal
-// 	Helper function that parses config json values into any given struct.
-// 	* @param path: File location where config values are stored
-// 	* @param config: A pointer to a struct where values will be read into */
 func unmarshal(path string, config interface{}) error {
 	_, err := os.Stat(path)
 	if !os.IsNotExist(err) {
