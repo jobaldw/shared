@@ -10,10 +10,10 @@ const (
 )
 
 var (
-	ErrDeleteFailed   = fmt.Errorf("could not remove document") // an error ocurred trying to delete a document
-	ErrInsertFailed   = fmt.Errorf("could not create document") // an error ocurred trying to create a new document
-	ErrUpdateFailed   = fmt.Errorf("could not update document") // an error ocurred trying to update a document
-	ErrNoBudgetsFound = fmt.Errorf("no documents were found")   // an error ocurred trying to retrieve a document
+	ErrDeleteFailed   = fmt.Errorf("could not remove document") // an error occurred trying to delete a document
+	ErrInsertFailed   = fmt.Errorf("could not create document") // an error occurred trying to create a new document
+	ErrUpdateFailed   = fmt.Errorf("could not update document") // an error occurred trying to update a document
+	ErrNoBudgetsFound = fmt.Errorf("no documents were found")   // an error occurred trying to retrieve a document
 )
 
 // struct for mongo errors
