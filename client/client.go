@@ -1,6 +1,6 @@
 /*
-Package client implements a client with the ability to make HTTP request
-and handler their responses.
+Package client implements a client with the ability to make HTTP requests
+and handle their responses.
 
 The package client is limited to the below request methods:
   - DELETE, GET, POST, PUT
@@ -28,10 +28,7 @@ const packageKey = "client" // package logging key
 // A simple client that will also handle http requests. Uses the
 // "net/http "and "net/url" packages.
 type Client struct {
-	// health path used for client health and ready checks
 	health string
-
-	// the net/http client struct
 	client *http.Client
 
 	// key-value pairs in an HTTP header

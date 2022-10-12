@@ -14,7 +14,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil" // TODO: upgrade package
+	"io"
 	"os"
 	"reflect"
 )
@@ -120,7 +120,7 @@ func Unmarshal(config interface{}) error {
 	}
 
 	// read the root director of the project
-	root, err := ioutil.ReadDir(root)
+	root, err := os.ReadDir(root)
 	if err != nil {
 		return fmt.Errorf("%s: %s", packageKey, err)
 	}
@@ -128,7 +128,7 @@ func Unmarshal(config interface{}) error {
 	// search for the config directory and its files
 	for _, folder := range root {
 		if folder.IsDir() && folder.Name() == configDirectory {
-			configs, err := ioutil.ReadDir(folder.Name())
+			configs, err := os.ReadDir(folder.Name())
 			if err != nil {
 				return fmt.Errorf("%s: %s", packageKey, err)
 			}
@@ -158,7 +158,7 @@ func unmarshal(path string, config interface{}) error {
 		defer file.Close()
 
 		// read file contents
-		data, err := ioutil.ReadAll(file)
+		data, err := io.ReadAll(file)
 		if err != nil {
 			return fmt.Errorf(`%v, could not read "%s"`, err, path)
 		}

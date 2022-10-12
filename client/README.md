@@ -1,6 +1,6 @@
 # shared | client
 
-A simple http client that make client calls quicker and lighter while still allowing for customization. Intended on being used with the `shared/config` package. The package only allows for the following request methods: DELETE, GET, POST, PUT.
+A simple http client that makes client calls quicker and lighter while still allowing for customization. This package is intended on being used with the `shared/config` package.
 
 ## How To Use
 

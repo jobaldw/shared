@@ -2,20 +2,18 @@ package client
 
 import (
 	"io"
-	"io/ioutil"
 	"net/http"
 )
 
 // The response from an HTTP request.
 type Response struct {
+	body io.ReadCloser
+
 	// http status test. Example "200 OK"
 	Status string
 
 	// http status code. Example 200
 	StatusCode int
-
-	// interface that groups the basic Read and Close methods
-	body io.ReadCloser
 
 	// the request that was received by a server or to be sent by a
 	// client
@@ -31,19 +29,35 @@ func (r *Response) GetBody() io.Reader {
 // GetBodyBytes
 // reads the response body i/o and converts it to a byte array.
 func (r *Response) GetBodyBytes() []byte {
-	bodyBytes, _ := ioutil.ReadAll(r.body)
+	bodyBytes, _ := io.ReadAll(r.body)
 	return bodyBytes
 }
 
 // GetBodyString
 // parses the response body i/o interface into a string.
 func (r *Response) GetBodyString() string {
-	bodyBytes, _ := ioutil.ReadAll(r.body)
+	bodyBytes, _ := io.ReadAll(r.body)
 	return string(bodyBytes)
 }
 
 // IsSuccessful
 // checks if the response status code is 200 level.
 func (r *Response) IsSuccessful() bool {
-	return r.StatusCode > 199 && r.StatusCode < 300
+	return r.check(199, 300)
+}
+
+// IsClientError
+// checks if the response status code is 400 level.
+func (r *Response) IsClientError() bool {
+	return r.check(399, 500)
+}
+
+// IsServerError
+// checks if the response status code is 500 level.
+func (r *Response) IsServerError() bool {
+	return r.check(499, 600)
+}
+
+func (r *Response) check(min, max int) bool {
+	return r.StatusCode > min && r.StatusCode < max
 }

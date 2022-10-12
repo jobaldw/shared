@@ -1,4 +1,3 @@
-// nolint
 package client
 
 import (
@@ -50,11 +49,8 @@ func TestClient_IsReady(t *testing.T) {
 				return
 			}
 
-			isReady, err := client.IsReady(test.args)
-			got := resp{
-				IsReady: isReady,
-				Err:     err,
-			}
+			var got resp
+			got.IsReady, got.Err = client.IsReady(test.args)
 
 			if diff := cmp.Diff(test.resp, got, opts); diff != "" {
 				t.Errorf("Client.IsReady() mismatch (-want +got):\n%s", diff)
@@ -115,11 +111,8 @@ func TestClient_Post(t *testing.T) {
 				return
 			}
 
-			response, err := client.Post(test.args.path, test.args.params, test.args.body)
-			got := resp{
-				Response: response,
-				Err:      err,
-			}
+			var got resp
+			got.Response, got.Err = client.Post(test.args.path, test.args.params, test.args.body)
 
 			if diff := cmp.Diff(test.resp, got, opts); diff != "" {
 				t.Errorf("Client.Post() mismatch (-want +got):\n%s", diff)
@@ -180,11 +173,8 @@ func TestClient_Put(t *testing.T) {
 				return
 			}
 
-			response, err := client.Put(test.args.path, test.args.params, test.args.body)
-			got := resp{
-				Response: response,
-				Err:      err,
-			}
+			var got resp
+			got.Response, got.Err = client.Put(test.args.path, test.args.params, test.args.body)
 
 			if diff := cmp.Diff(test.resp, got, opts); diff != "" {
 				t.Errorf("Client.Put() mismatch (-want +got):\n%s", diff)
@@ -243,11 +233,8 @@ func TestClient_Delete(t *testing.T) {
 				return
 			}
 
-			response, err := client.Delete(test.args.path, test.args.params)
-			got := resp{
-				Response: response,
-				Err:      err,
-			}
+			var got resp
+			got.Response, got.Err = client.Delete(test.args.path, test.args.params)
 
 			if diff := cmp.Diff(test.resp, got, opts); diff != "" {
 				t.Errorf("Client.Delete() mismatch (-want +got):\n%s", diff)

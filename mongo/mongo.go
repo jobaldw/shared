@@ -1,9 +1,9 @@
 /*
 Package mongo implements a Mongo instance that connects to a
-database and allows interactions to the datasource.
+database and allows interactions with the datasource.
 
-All functions that require a context to be passed should be given one from
-the service handler request to correctly handle cancellations.
+All functions that require a context to be passed should be given one
+from the service handler request to correctly handle cancellations.
 */
 package mongo
 
